@@ -148,9 +148,7 @@ function showMediaDetail(item) {
       <a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
     `;
   } else {
-    // direct users to catbox.moe with the file URL encoded in the query
-    const catboxHref = `https://catbox.moe/?u=${encodeURIComponent(item.link)}`;
-    downloadHtml = `<a href="${catboxHref}" class="download-btn" target="_blank" rel="noopener noreferrer">Download (Catbox)</a>`;
+    downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
 
   detail.innerHTML = `
@@ -180,6 +178,7 @@ function showMediaDetail(item) {
 
   
 
+  // If the detail contains a native video element, attach a 'play' handler to pause others
   const videoEl = detail.querySelector('video');
   if (videoEl) {
     videoEl.addEventListener('play', () => pauseAllMedia(videoEl));
@@ -190,6 +189,7 @@ function showMediaDetail(item) {
 function backToGrid() {
   document.getElementById('mediaContainer').classList.remove('hidden');
   document.getElementById('mediaDetail').classList.add('hidden');
+  // stop any playing media and clear iframe src to halt YouTube playback
   pauseAllMedia();
   stopAllIframes();
 }
