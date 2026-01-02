@@ -142,14 +142,10 @@ function showMediaDetail(item) {
     preview = `<div class="file-icon-large">📄</div>`;
   }
   
-  // download or open-on-youtube button. For YouTube we offer both open and a third-party download link.
   let downloadHtml = '';
   if (isYouTubeUrl(item.link)) {
-    const id = getYouTubeID(item.link);
-    const downloadLink = id ? `https://ssyoutube.com/watch?v=${id}` : item.link;
     downloadHtml = `
       <a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
-      <a href="${downloadLink}" class="download-btn" target="_blank" rel="noopener noreferrer">Download (third-party)</a>
     `;
   } else {
     // direct users to catbox.moe with the file URL encoded in the query
@@ -184,7 +180,6 @@ function showMediaDetail(item) {
 
   
 
-  // If the detail contains a native video element, attach a 'play' handler to pause others
   const videoEl = detail.querySelector('video');
   if (videoEl) {
     videoEl.addEventListener('play', () => pauseAllMedia(videoEl));
@@ -195,7 +190,6 @@ function showMediaDetail(item) {
 function backToGrid() {
   document.getElementById('mediaContainer').classList.remove('hidden');
   document.getElementById('mediaDetail').classList.add('hidden');
-  // stop any playing media and clear iframe src to halt YouTube playback
   pauseAllMedia();
   stopAllIframes();
 }
