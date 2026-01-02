@@ -29,6 +29,105 @@ function getYouTubeThumbnail(id) {
   return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 }
 
+// --- Faster download helpers ---
+// Try a HEAD request to determine support for range requests and file size
+async function probeUrl(url) {
+  try {
+    const resp = await fetch(url, { method: 'HEAD' });
+    if (!resp.ok) return { acceptRanges: false };
+    const accept = resp.headers.get('accept-ranges');
+    const length = parseInt(resp.headers.get('content-length') || '0', 10) || null;
+    const type = resp.headers.get('content-type') || '';
+    return { acceptRanges: !!accept && accept !== 'none', length, type };
+  } catch (e) {
+    return { acceptRanges: false };
+  }
+}
+
+// Parallel range downloader. Falls back to single fetch if ranges unsupported.
+async function chunkedDownload(url, filename, { onProgress = () => {}, signal = null, concurrency = 4 } = {}) {
+  const probe = await probeUrl(url);
+  if (!probe.length || !probe.acceptRanges) {
+    // fallback to simple streaming fetch
+    const resp = await fetch(url, { signal });
+    if (!resp.ok) throw new Error('Download failed');
+    const reader = resp.body.getReader();
+    const chunks = [];
+    let received = 0;
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      chunks.push(value);
+      received += value.length;
+      onProgress(received, probe.length || 0);
+    }
+    const blob = new Blob(chunks, { type: resp.headers.get('content-type') || probe.type || 'application/octet-stream' });
+    triggerDownload(blob, filename);
+    return;
+  }
+
+  const total = probe.length;
+  const partSize = Math.ceil(total / concurrency);
+  const parts = [];
+  let loaded = 0;
+
+  // perform parallel range requests
+  const fetchPart = async (start, end, index) => {
+    const headers = { Range: `bytes=${start}-${end}` };
+    const resp = await fetch(url, { headers, signal });
+    if (!resp.ok && resp.status !== 206) throw new Error('Range request failed');
+    const buffer = await resp.arrayBuffer();
+    loaded += buffer.byteLength;
+    onProgress(loaded, total);
+    parts[index] = buffer;
+  };
+
+  const tasks = [];
+  for (let i = 0; i < concurrency; i++) {
+    const start = i * partSize;
+    const end = Math.min((i + 1) * partSize - 1, total - 1);
+    if (start > end) break;
+    tasks.push(fetchPart(start, end, i));
+  }
+
+  await Promise.all(tasks);
+
+  // combine parts
+  const combined = new Uint8Array(total);
+  let offset = 0;
+  for (let i = 0; i < parts.length; i++) {
+    const chunk = new Uint8Array(parts[i]);
+    combined.set(chunk, offset);
+    offset += chunk.length;
+  }
+
+  const blob = new Blob([combined], { type: probe.type || 'application/octet-stream' });
+  triggerDownload(blob, filename);
+}
+
+function triggerDownload(blob, filename) {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename || 'download';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 30000);
+}
+
+function filenameFromUrl(url) {
+  try {
+    const u = new URL(url);
+    const path = u.pathname.split('/');
+    const name = path[path.length - 1] || 'file';
+    return decodeURIComponent(name);
+  } catch (e) {
+    return 'download';
+  }
+}
+// --- end faster download helpers ---
+
 // Load media from JSON
 async function loadMedia() {
   try {
@@ -152,7 +251,16 @@ function showMediaDetail(item) {
       <a href="${downloadLink}" class="download-btn" target="_blank" rel="noopener noreferrer">Download (third-party)</a>
     `;
   } else {
-    downloadHtml = `<a href="${item.link}" class="download-btn" download>Download</a>`;
+    const fname = filenameFromUrl(item.link);
+    downloadHtml = `
+      <button id="fastDownloadBtn" class="download-btn">Fast Download</button>
+      <a href="${item.link}" class="download-btn" download>Download</a>
+      <div id="downloadProgress" class="download-progress hidden">
+        <progress id="downloadProgressBar" value="0" max="1"></progress>
+        <span id="downloadProgressText"></span>
+        <button id="cancelDownloadBtn" class="download-btn">Cancel</button>
+      </div>
+    `;
   }
 
   detail.innerHTML = `
@@ -179,6 +287,50 @@ function showMediaDetail(item) {
   
   container.classList.add('hidden');
   detail.classList.remove('hidden');
+
+  // Wire up fast download UI (if present)
+  const fastBtn = detail.querySelector('#fastDownloadBtn');
+  if (fastBtn) {
+    const progressWrap = detail.querySelector('#downloadProgress');
+    const progressBar = detail.querySelector('#downloadProgressBar');
+    const progressText = detail.querySelector('#downloadProgressText');
+    const cancelBtn = detail.querySelector('#cancelDownloadBtn');
+    let controller = null;
+
+    const startDownload = async () => {
+      controller = new AbortController();
+      progressWrap.classList.remove('hidden');
+      progressBar.value = 0;
+      progressText.textContent = 'Starting...';
+      try {
+        await chunkedDownload(item.link, filenameFromUrl(item.link), {
+          onProgress: (loaded, total) => {
+            if (total) progressBar.value = loaded / total;
+            progressText.textContent = total ? `${Math.round((loaded/total)*100)}%` : `${(loaded/1024).toFixed(0)} KB`;
+          },
+          signal: controller.signal
+        });
+        progressText.textContent = 'Completed';
+      } catch (e) {
+        if (e.name === 'AbortError') {
+          progressText.textContent = 'Cancelled';
+        } else {
+          progressText.textContent = 'Error';
+          console.error('Download error', e);
+        }
+      } finally {
+        setTimeout(() => {
+          progressWrap.classList.add('hidden');
+          progressBar.value = 0;
+        }, 2000);
+      }
+    };
+
+    fastBtn.addEventListener('click', () => startDownload());
+    cancelBtn.addEventListener('click', () => {
+      if (controller) controller.abort();
+    });
+  }
 
   // If the detail contains a native video element, attach a 'play' handler to pause others
   const videoEl = detail.querySelector('video');
