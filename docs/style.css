@@ -159,6 +159,8 @@ body {
     max-height: 700px;
     width: 100%;
     object-fit: contain;
+    aspect-ratio: 16/9;
+    height: auto;
     border-radius: 8px;
 }
 
