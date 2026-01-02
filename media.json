@@ -1,0 +1,14 @@
+{
+  "media": [
+    {
+      "id": "1",
+      "type": "image",
+      "link": "https://example.com/image.jpg",
+      "title": "Example Image",
+      "description": "This is an example image",
+      "tags": ["example", "test", "image"],
+      "credits": "Creator#1234",
+      "submitted_by": "Uploader#5678"
+    }
+  ]
+}

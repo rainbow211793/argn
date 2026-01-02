@@ -1,0 +1,45 @@
+{
+  "media": [
+    {
+      "id": "1",
+      "type": "image",
+      "link": "https://files.catbox.moe/damdys.png",
+      "title": "Gifstad Flag [2nd day of SL0-SL2]",
+      "description": "A funny meme about Discord bots that has been circulating in the server",
+      "tags": ["Gifstad", "flag", "iconic", "gifsk", "SL0", "SL1", "SL2"],
+      "credits": "transcendedchaos",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "4",
+      "type": "video",
+      "link": "https://www.youtube.com/watch?v=GAVR7g00G3A&list=RDGAVR7g00G3A&start_radio=1",
+      "title": "\"Gifstadians shall unite\" Anthem of Gifstad",
+      "description": "The national anthem of Gifstad, uploaded to YouTube by Sovereign Lands explained",
+      "tags": ["anthem", "video", "gifstadian anthem", "epic", "gifstad", "sovereign lands explained", "music"],
+      "credits": "neox1701",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "3",
+      "type": "gif",
+      "link": "https://files.catbox.moe/1sf797.gif",
+      "title": "Gifstad my beloved reaction gif",
+      "description": "A gifstadian meme that was made to show love for Gifstad",
+      "tags": ["reaction", "gif", "funny", "meme", "gifstad", "love", "beloved"],
+      "credits": "sebisuper9mil",
+      "submitted_by": "rainbow211793"
+    }
+    ,
+    {
+      "id": "4",
+      "type": "video",
+      "link": "https://files.catbox.moe/9x7bss.mp4",
+      "title": "Love Gifstad",
+      "description": "A gifstadian meme that was made to show love for Gifstad",
+      "tags": ["gifstad", "Love", "meme", "cube"],
+      "credits": "Unknown",
+      "submitted_by": "rainbow211793"
+    }
+  ]
+}
