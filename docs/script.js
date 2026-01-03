@@ -66,8 +66,6 @@ function copyToClipboard(text) {
     alert('Failed to copy to clipboard');
   });
 }
-
-// Get media preview HTML based on type
 function getMediaPreview(item, isDetail = false) {
   const baseClass = isDetail ? 'detail-preview' : 'media-preview';
   
@@ -260,14 +258,11 @@ function showMediaDetail(item) {
     downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
   
-  const shareLink = `${window.location.origin}${window.location.pathname.replace('index.html', '')}#${item.slug || item.id}`;
-  
   detail.innerHTML = `
     <div class="detail-header">
       <button class="back-btn" onclick="backToGrid()">← Back</button>
       <div class="detail-buttons">
         ${downloadHtml}
-        <button class="share-btn" onclick="copyToClipboard('${shareLink}')">📋 Share Link</button>
       </div>
     </div>
     <div class="detail-content">
@@ -276,10 +271,6 @@ function showMediaDetail(item) {
         <div class="detail-category-badge">${item.category || 'Uncategorized'}</div>
         <h2>${item.title}</h2>
         <p class="description">${item.description}</p>
-        <div class="slug-section">
-          <strong>Link:</strong>
-          <code class="slug-code">argn.quest/${item.slug || item.id}</code>
-        </div>
         <div class="tags-section">
           <strong>Tags:</strong>
           <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
