@@ -65,9 +65,29 @@
       "type": "video",
       "link": "https://www.youtube.com/shorts/PeopYoMcnqw",
       "title": " Gifstad Alt Histoty Edit #001 ",
-      "description": "A meme youtube short edited on capcut created.",
-      "tags": ["colonisation", "YT", "youtube", "video", "jörmunland", "pingu", "expedition"],
-      "credits": "rainbow211793",
+      "description": "A meme youtube short edited on capcut created by rainbow211793 about an alternate history of Gifstad [map made by sarmaledelamama]",
+      "tags": ["edit", "YT", "youtube", "video", "1", "alternate history", "alt history", "different timeline"],
+      "credits": "rainbow211793, sarmaledelamama",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "8",
+      "type": "video",
+      "link": "https://www.youtube.com/shorts/3ouao6bfTqI",
+      "title": " Watch till the end 👀 ",
+      "description": "A meme youtube short edited on capcut created by rainbow211793 about an alternate history of Nitvas as a meme [Ohklanitvas] [map made by mafi43211]",
+      "tags": ["nitvas", "meme", "youtube", "video", "YT", "okhlanitvas", "alternate history", "alt history"],
+      "credits": "rainbow211793, mafi43211",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "9",
+      "type": "image",
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/begintofle.png",
+      "title": "Begin to fle",
+      "description": "The National Flag of Gifstad, used from SL2 onwards",
+      "tags": ["Gifstad", "flag", "iconic", "gifsk", "SL2"],
+      "credits": "unknown",
       "submitted_by": "rainbow211793"
     }
   ]
