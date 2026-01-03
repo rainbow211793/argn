@@ -13,13 +13,20 @@
             <p>"Distribute, Create & Save"</p>
             
             <div class="filter-section">
-                <input type="text" placeholder="Search media by tags..." class="search-bar" id="searchInput">
+                <input type="text" placeholder="Search media or folders..." class="search-bar" id="searchInput">
                 
                 <div class="category-filter">
                     <label for="categorySelect">Filter by Category:</label>
                     <select id="categorySelect" class="category-select">
                         <option value="">All Categories</option>
                     </select>
+                </div>
+            </div>
+
+            <div id="folderScroll" class="folder-scroll-container">
+                <div class="folder-card all-folders-card active" onclick="filterByFolder('')">
+                    <div class="folder-icon" style="background-color: #3a5a7a;">📂</div>
+                    <div class="folder-name">All</div>
                 </div>
             </div>
             

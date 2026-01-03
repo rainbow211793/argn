@@ -1,9 +1,16 @@
 {
   "folders": [
     {
-      "id": "1",
-      "name": "YouTube Videos",
-      "description": "A folder for YouTube videos on Gifstad."
+      "id": "youtube",
+      "name": "Youtube",
+      "description": "YouTube videos",
+      "color": "#ff0000"
+    },
+    {
+      "id": "youtube_shorts",
+      "name": "Youtube Shorts",
+      "description": "YouTube Shorts videos",
+      "color": "#ff4444"
     }
   ],
 
@@ -26,7 +33,7 @@
       "type": "video",
       "slug": "gifstad_anthem",
       "category": "Music",
-      "folders": ["1"],
+      "folders": ["youtube"],
       "link": "https://www.youtube.com/watch?v=GAVR7g00G3A&list=RDGAVR7g00G3A&start_radio=1",
       "title": "\"Gifstadians shall unite\" Anthem of Gifstad",
       "description": "The national anthem of Gifstad, uploaded to YouTube by Sovereign Lands explained",
@@ -52,7 +59,7 @@
       "type": "video",
       "slug": "love_gifstad",
       "category": "Memes",
-      "folders": ["1"],
+      "folders": [],
       "link": "https://file.garden/aVg4wWHpj1W4fShD/lv_7435996424950648117_20250107230348.mp4",
       "title": "Love Gifstad",
       "description": "A gifstadian meme that was made to show love for Gifstad",
@@ -65,7 +72,7 @@
       "type": "video",
       "slug": "jormunland_colonization",
       "category": "Education",
-      "folders": ["1"],
+      "folders": ["youtube"],
       "link": "https://www.youtube.com/watch?v=5gl2qy1Vis4",
       "title": "Jörmunland - A video on the colonisation of Jörmunland",
       "description": "A video made by Gifstadian citizen rainbow21173 about the colonisation of Jörmunland by Pingu's expedition.",
@@ -78,7 +85,7 @@
       "type": "video",
       "slug": "rule_gifstadia",
       "category": "Music",
-      "folders": ["1"],
+      "folders": ["youtube"],
       "link": "https://www.youtube.com/watch?v=MCGn6m8PjTA",
       "title": "\"Rule Gifstadia!\" - Gifstadian Patriotic song",
       "description": "A song made by SL community antidisestablishmentarianism11 and requested to be made by rainbow211793.",
@@ -91,7 +98,7 @@
       "type": "video",
       "slug": "gifstad_alt_history_001",
       "category": "Memes",
-      "folders": ["1"],
+      "folders": ["youtube_shorts"],
       "link": "https://www.youtube.com/shorts/PeopYoMcnqw",
       "title": "Gifstad Alt History Edit #001",
       "description": "A meme youtube short edited on capcut created by rainbow211793 about an alternate history of Gifstad [map made by sarmaledelamama]",
@@ -104,7 +111,7 @@
       "type": "video",
       "slug": "nitvas_alt_history",
       "category": "Memes",
-      "folders": ["1"],
+      "folders": ["youtube_shorts"],
       "link": "https://www.youtube.com/shorts/3ouao6bfTqI",
       "title": "Watch till the end 👀",
       "description": "A meme youtube short edited on capcut created by rainbow211793 about an alternate history of Nitvas as a meme [Ohklanitvas] [map made by mafi43211]",
@@ -130,7 +137,7 @@
       "type": "video",
       "slug": "nick_crimes",
       "category": "Memes",
-      "folders": ["1"],
+      "folders": ["youtube_shorts"],
       "link": "https://www.youtube.com/shorts/ljFLKMOrxXg",
       "title": "Nick 💀",
       "description": "A meme youtube short edited on capcut created by rainbow211793 about echo52541 commiting crimes [not accurate].",

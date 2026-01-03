@@ -1,7 +1,9 @@
 let allMedia = [];
+let allFolders = [];
 let filteredMedia = [];
 let currentView = 'grid';
 let selectedCategory = '';
+let selectedFolder = '';
 
 // Helpers for YouTube detection and embedding
 function isYouTubeUrl(url) {
@@ -146,7 +148,11 @@ async function loadMedia() {
     const response = await fetch('./media.json');
     const data = await response.json();
     allMedia = data.media;
+    allFolders = data.folders || [];
     filteredMedia = allMedia;
+    
+    // Populate folder filter
+    populateFolderFilter();
     
     // Populate category filter
     populateCategoryFilter();
@@ -175,21 +181,83 @@ function populateCategoryFilter() {
   });
 }
 
+// Populate folder filter
+function populateFolderFilter() {
+  const folderScroll = document.getElementById('folderScroll');
+  
+  allFolders.forEach(folder => {
+    const folderCard = document.createElement('div');
+    folderCard.className = 'folder-card';
+    folderCard.onclick = () => filterByFolder(folder.id);
+    folderCard.title = folder.description;
+    folderCard.innerHTML = `
+      <div class="folder-icon" style="background-color: ${folder.color || '#3a5a7a'};">📂</div>
+      <div class="folder-name">${folder.name}</div>
+    `;
+    folderScroll.appendChild(folderCard);
+  });
+}
+
 // Apply both search and category filters
 function applyFilters() {
   const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
   
+  // Filter folders
+  filterFolders(searchTerm);
+  
   filteredMedia = allMedia.filter(item => {
     const matchCategory = !selectedCategory || item.category === selectedCategory;
+    const matchFolder = !selectedFolder || (item.folders && item.folders.includes(selectedFolder));
     const matchSearch = !searchTerm || 
       item.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
       item.title.toLowerCase().includes(searchTerm) ||
       item.description.toLowerCase().includes(searchTerm);
     
-    return matchCategory && matchSearch;
+    return matchCategory && matchFolder && matchSearch;
   });
   
   displayMedia(filteredMedia);
+}
+
+// Filter folders by search term
+function filterFolders(searchTerm) {
+  document.querySelectorAll('.folder-card').forEach((card, index) => {
+    if (index === 0) {
+      // Always show "All" button
+      card.style.display = 'flex';
+      return;
+    }
+    
+    const folderName = card.querySelector('.folder-name').textContent.toLowerCase();
+    if (!searchTerm || folderName.includes(searchTerm)) {
+      card.style.display = 'flex';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// Filter by folder
+function filterByFolder(folderId) {
+  selectedFolder = folderId;
+  
+  // Update active folder card
+  document.querySelectorAll('.folder-card').forEach(card => {
+    card.classList.remove('active');
+  });
+  
+  if (!folderId) {
+    document.querySelector('.all-folders-card').classList.add('active');
+  } else {
+    const folders = document.querySelectorAll('.folder-card:not(.all-folders-card)');
+    folders.forEach((card, index) => {
+      if (allFolders[index] && allFolders[index].id === folderId) {
+        card.classList.add('active');
+      }
+    });
+  }
+  
+  applyFilters();
 }
 
 // Display media in grid
