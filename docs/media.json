@@ -144,6 +144,71 @@
       "tags": ["Gifstad", "nick", "crimes", "memes", "SL2", "warcrimes"],
       "credits": "rainbow211793",
       "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "11",
+      "type": "photos",
+      "slug": "Frihetskorps_logo",
+      "category": "Logos",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/Frihetskorps_logo.png",
+      "title": "Frihetskorpset Logo",
+      "description": "The Logo for the Frihetskorpset militia in Gifstad that conducted the first coup of severmark.",
+      "tags": ["logo", "moravian", "echo", "Frihetskorpset", "severmark", "coup"],
+      "credits": "echo_072681",
+      "submitted_by": "rainbow211793, echo_072681"
+    },
+    {
+      "id": "12",
+      "type": "photos",
+      "slug": "Frihetskorps_uniform",
+      "category": "Uniforms",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/Night_Assault_Regiment.webp",
+      "title": "Frihetskorpset Uniform",
+      "description": "The uniform for the Frihetskorpset militia in Gifstad that conducted the first coup of severmark.",
+      "tags": ["uniform", "moravian", "echo", "Frihetskorpset", "severmark", "coup"],
+      "credits": "echo_072681",
+      "submitted_by": "rainbow211793, echo_072681"
+    },
+    {
+      "id": "12",
+      "type": "photos",
+      "slug": "SL_armored_car_on_road",
+      "category": "Vechiles",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/SL_armored_car_on_road.png",
+      "title": "SL armored car on road",
+      "description": "An SL armoured car used presumably owned by Gifstad.",
+      "tags": ["tank", "road", "SL", "Armoured", "Vechiles", "military"],
+      "credits": "echo_072681",
+      "submitted_by": "rainbow211793, echo_072681"
+    },
+    {
+      "id": "12",
+      "type": "photos",
+      "slug": "SL_armored_car_on_road",
+      "category": "Vechiles",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/SL_tank_on_road.png",
+      "title": "SL light tank on road",
+      "description": "An SL light tank used presumably owned by Gifstad.",
+      "tags": ["tank", "road", "SL", "SL tank", "Vechiles", "military"],
+      "credits": "echo_072681",
+      "submitted_by": "rainbow211793, echo_072681"
+    },
+    {
+      "id": "13",
+      "type": "photos",
+      "slug": "rainbowtz_island_truth",
+      "category": "News post",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/rainbowtzislandtruthrevealed.png",
+      "title": "Rainbowtz Island Truth Revealed",
+      "description": "A news post revealing the truth about rainbowtz island being a condinium with Marwanid-Solaris",
+      "tags": ["news post", "island", "isle", "rainbowtz", "reveal", "news", "post"],
+      "credits": "bjorn.s9",
+      "submitted_by": "rainbow211793"
     }
   ]
 }
