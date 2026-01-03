@@ -11,6 +11,12 @@
       "name": "Youtube Shorts",
       "description": "YouTube Shorts videos",
       "color": "#ff4444"
+    },
+    {
+      "id": "SL1maps",
+      "name": "SL1 Maps of Gifstad++",
+      "description": "Maps of Gifstad and its territories during SL1",
+      "color": "#FFFF00"
     }
   ],
 
@@ -238,16 +244,107 @@
     },
     {
       "id": "16",
-      "type": "text",
+      "type": "audio",
       "slug": "rainbowtz_island_plans",
       "category": "News post",
       "folders": [],
       "link": "https://file.garden/aVg4wWHpj1W4fShD/nitvaser.mp3",
-      "title": "rainbowtz island planning & costs",
-      "description": "A private news post report revealing the planning and costs for rainbowtz island [private, sourced from _blankstate_]",
+      "title": "Hero saying Nitvaser meme",
+      "description": "A meme audio clip of Hero saying Nitvaser and being clipped and saved as an mp4 but the archives saved it as .mp3 [public, sourced from rainbow211793].",
       "tags": ["news post", "planning", "rainbowtz island", "island", "costs", "news", "post"],
+      "credits": "unknown",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "17",
+      "type": "image",
+      "slug": "Coat_of_Arm_Gifstad[SL2]",
+      "category": "Flags",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/Coat_of_Arm_Gifstad%5BSL2%5D.webp",
+      "title": "Coat of arms of Gifstad [SL2]",
+      "description": "A coat of arms representing Gifstad used from SL2.",
+      "tags": ["COA", "Coat", "Coat of arms", "Gifstad", "arms", "of", "media"],
       "credits": "_blankstate_",
       "submitted_by": "rainbow211793, _blankstate_"
+    },
+    {
+      "id": "18",
+      "type": "image",
+      "slug": "Map_of_SL1_Gifstad_City_Map",
+      "category": "Maps",
+      "folders": ["SL1maps"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/city_map_labeled_SL1_Gifstad.webp",
+      "title": "Map of SL1 Gifstad City Map Labeled",
+      "description": "A map of SL1 Gifstad [Not at it's peak but at it's starting size].",
+      "tags": ["Maps", "SL1", "Map of Gifstad", "Labelled city map", "Helligstad", "Mapping", "media"],
+      "credits": "sebisuper9mil",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "19",
+      "type": "image",
+      "slug": "Map_of_SL1_AltGifstad_Territory",
+      "category": "Maps",
+      "folders": ["SL1maps"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/altgifstadsl1_map.webp",
+      "title": "Map of AltGifstad SL1",
+      "description": "Map of SL1 Gifstad Alternate History scenario made by saremaledelamama",
+      "tags": ["alt history", "alt", "Map", "Gifstad", "giga", "big", "Map of Alt Gifstad"],
+      "credits": "sarmaledelamama",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "20",
+      "type": "image",
+      "slug": "Flag_of_Columbia_SL2",
+      "category": "Flags",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/Flag_of_Columbia_SL2.webp",
+      "title": "Flag of Columbia [SL2]",
+      "description": "The national flag of Columbia used during SL2.",
+      "tags": ["Columbia", "Flag", "Columbian flag", "Green", "Colonial flags", "Nationalist", "Singaporean"],
+      "credits": "themostpatroticsingaporean",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "21",
+      "type": "image",
+      "slug": "Unlabelled_Map_of_SL1_Gifstad_City",
+      "category": "Maps",
+      "folders": ["SL1maps"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/mapofgifstadsl1urbannolabels.webp",
+      "title": "Map of SL1 Gifstad City Map Unlabeled",
+      "description": "The unlabelled map of SL1 Gifstad City [Not at it's peak but at it's starting size].",
+      "tags": ["Maps", "unlabelled", "cities", "unlabelled city map", "gifstad", "SL1", "media"],
+      "credits": "sebisuper9mil",
+      "submitted_by": "rainbow211793, _blankstate_"
+    },
+    {
+      "id": "22",
+      "type": "image",
+      "slug": "evilgifstad",
+      "category": "Flags",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/evilgifstad.webp",
+      "title": "Flag of \"Evil Gifstad\"",
+      "description": "A flag make to represent an evil version of Gifstad [just inversed the blues in the flag].",
+      "tags": ["reversed flag", "inverted flag", "flag", "Villain", "datsfig", "evil flag", "evil"],
+      "credits": "_blankstate_",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "23",
+      "type": "image",
+      "slug": "OG Map of SL1 Gifstad City Labeled",
+      "category": "Maps",
+      "folders": ["SL1maps"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/mapofgifstadsl1urbanlabels.webp.webp",
+      "title": "OG Map of SL1 Gifstad City Labeled",
+      "description": "A map of SL1 Gifstad's cities labelled [Not at it's peak but at it's starting size].",
+      "tags": ["SL1", "labelled", "OG map", "Gui", "Old Map", "Old SL1 map", "media"],
+      "credits": "GuiM2",
+      "submitted_by": "rainbow211793"
     }
   ]
 }
