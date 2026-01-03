@@ -1,5 +1,7 @@
 let allMedia = [];
-let currentView = 'grid'; // grid or detail
+let filteredMedia = [];
+let currentView = 'grid';
+let selectedCategory = '';
 
 // Helpers for YouTube detection and embedding
 function isYouTubeUrl(url) {
@@ -21,7 +23,6 @@ function getYouTubeID(url) {
 }
 
 function getYouTubeEmbedUrl(id) {
-  // include modest branding and JS API enable for better control
   return `https://www.youtube.com/embed/${id}?rel=0&modestbranding=1&enablejsapi=1`;
 }
 
@@ -29,19 +30,7 @@ function getYouTubeThumbnail(id) {
   return `https://img.youtube.com/vi/${id}/hqdefault.jpg`;
 }
 
-// Load media from JSON
-async function loadMedia() {
-  try {
-    const response = await fetch('./media.json');
-    const data = await response.json();
-    allMedia = data.media;
-    displayMedia(allMedia);
-  } catch (error) {
-    console.error('Error loading media:', error);
-  }
-}
-
-// Pause all audio/video elements. If `except` is provided, don't pause that element.
+// Pause all audio/video elements
 function pauseAllMedia(except = null) {
   document.querySelectorAll('video, audio').forEach(el => {
     if (el !== except) {
@@ -51,7 +40,7 @@ function pauseAllMedia(except = null) {
   });
 }
 
-// Stop all YouTube iframes by clearing their `src` (useful for embedded YouTube players)
+// Stop all YouTube iframes
 function stopAllIframes() {
   document.querySelectorAll('iframe').forEach(iframe => {
     try {
@@ -60,6 +49,149 @@ function stopAllIframes() {
       }
     } catch (e) {}
   });
+}
+
+// Copy to clipboard
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    // Show temporary feedback
+    const shareBtn = event.target;
+    const originalText = shareBtn.textContent;
+    shareBtn.textContent = 'Copied!';
+    setTimeout(() => {
+      shareBtn.textContent = originalText;
+    }, 2000);
+  }).catch(err => {
+    console.error('Failed to copy:', err);
+    alert('Failed to copy to clipboard');
+  });
+}
+
+// Get media preview HTML based on type
+function getMediaPreview(item, isDetail = false) {
+  const baseClass = isDetail ? 'detail-preview' : 'media-preview';
+  
+  if (item.type === 'image') {
+    return `<img src="${item.link}" alt="${item.title}" class="${baseClass}">`;
+  } else if (item.type === 'video') {
+    if (isYouTubeUrl(item.link)) {
+      const id = getYouTubeID(item.link);
+      if (isDetail) {
+        const embed = id ? getYouTubeEmbedUrl(id) : item.link;
+        pauseAllMedia();
+        stopAllIframes();
+        return `<iframe class="${baseClass}" src="${embed}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
+      } else {
+        const thumb = id ? getYouTubeThumbnail(id) : '';
+        return `
+          <div class="youtube-card">
+            <img src="${thumb}" alt="${item.title}" class="${baseClass}">
+            <div class="play-badge">▶</div>
+          </div>
+        `;
+      }
+    } else {
+      return `<video class="${baseClass}" controls><source src="${item.link}"></video>`;
+    }
+  } else if (item.type === 'gif') {
+    return `<img src="${item.link}" alt="${item.title}" class="${baseClass}">`;
+  } else if (item.type === 'audio') {
+    return `<audio class="${baseClass}" controls><source src="${item.link}"></audio>`;
+  } else if (item.type === 'text') {
+    // For text files, display truncated content
+    return `<div class="${baseClass} text-preview" data-media-id="${item.id}">Loading text...</div>`;
+  } else {
+    const icon = item.type === 'text' ? '📄' : item.type === 'audio' ? '🎵' : '📄';
+    const height = isDetail ? '400px' : '200px';
+    return `<div class="file-icon${isDetail ? '-large' : ''}" style="height: ${height}">${icon}</div>`;
+  }
+}
+
+// Load text file content
+async function loadTextFileContent(mediaId, element) {
+  const item = allMedia.find(m => m.id === mediaId);
+  if (!item || item.type !== 'text') return;
+  
+  try {
+    const response = await fetch(item.link);
+    let content = await response.text();
+    
+    // Check if we need to truncate (more than 500 characters)
+    const truncated = content.length > 500;
+    const displayContent = truncated ? content.substring(0, 500) + '...' : content;
+    
+    element.innerHTML = `<pre class="text-content">${escapeHtml(displayContent)}</pre>`;
+    if (truncated) {
+      element.innerHTML += `<a href="${item.link}" target="_blank" class="read-more-btn">Read Full Text</a>`;
+    }
+  } catch (error) {
+    element.innerHTML = `<p class="error">Error loading text file</p>`;
+    console.error('Error loading text file:', error);
+  }
+}
+
+// Escape HTML characters
+function escapeHtml(text) {
+  const map = {
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#039;'
+  };
+  return text.replace(/[&<>"']/g, m => map[m]);
+}
+
+// Load media from JSON
+async function loadMedia() {
+  try {
+    const response = await fetch('./media.json');
+    const data = await response.json();
+    allMedia = data.media;
+    filteredMedia = allMedia;
+    
+    // Populate category filter
+    populateCategoryFilter();
+    
+    displayMedia(filteredMedia);
+  } catch (error) {
+    console.error('Error loading media:', error);
+  }
+}
+
+// Populate category dropdown
+function populateCategoryFilter() {
+  const categories = [...new Set(allMedia.map(m => m.category).filter(Boolean))].sort();
+  const select = document.getElementById('categorySelect');
+  
+  categories.forEach(cat => {
+    const option = document.createElement('option');
+    option.value = cat;
+    option.textContent = cat;
+    select.appendChild(option);
+  });
+  
+  select.addEventListener('change', (e) => {
+    selectedCategory = e.target.value;
+    applyFilters();
+  });
+}
+
+// Apply both search and category filters
+function applyFilters() {
+  const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
+  
+  filteredMedia = allMedia.filter(item => {
+    const matchCategory = !selectedCategory || item.category === selectedCategory;
+    const matchSearch = !searchTerm || 
+      item.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
+      item.title.toLowerCase().includes(searchTerm) ||
+      item.description.toLowerCase().includes(searchTerm);
+    
+    return matchCategory && matchSearch;
+  });
+  
+  displayMedia(filteredMedia);
 }
 
 // Display media in grid
@@ -76,31 +208,12 @@ function displayMedia(mediaList) {
     const card = document.createElement('div');
     card.className = 'media-card';
     
-    let preview = '';
-    if (item.type === 'image') {
-      preview = `<img src="${item.link}" alt="${item.title}" class="media-preview">`;
-    } else if (item.type === 'video') {
-      if (isYouTubeUrl(item.link)) {
-        const id = getYouTubeID(item.link);
-        const thumb = id ? getYouTubeThumbnail(id) : '';
-        preview = `
-          <div class="youtube-card">
-            <img src="${thumb}" alt="${item.title}" class="media-preview">
-            <div class="play-badge">▶</div>
-          </div>
-        `;
-      } else {
-        preview = `<video class="media-preview" controls><source src="${item.link}"></video>`;
-      }
-    } else if (item.type === 'gif') {
-      preview = `<img src="${item.link}" alt="${item.title}" class="media-preview">`;
-    } else {
-      preview = `<div class="file-icon">📄</div>`;
-    }
+    const preview = getMediaPreview(item, false);
     
     card.innerHTML = `
       ${preview}
       <div class="card-info">
+        <div class="card-category">${item.category || 'Uncategorized'}</div>
         <h3>${item.title}</h3>
         <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
       </div>
@@ -109,10 +222,24 @@ function displayMedia(mediaList) {
     card.addEventListener('click', () => showMediaDetail(item));
     container.appendChild(card);
 
-    // if the preview contains a native video element, add listeners to pause others when it plays
+    // Handle text file loading in cards
+    if (item.type === 'text') {
+      const textElement = card.querySelector('.text-preview');
+      if (textElement) {
+        loadTextFileContent(item.id, textElement);
+      }
+    }
+
+    // Pause others when native video plays
     const vid = card.querySelector('video');
     if (vid) {
       vid.addEventListener('play', () => pauseAllMedia(vid));
+    }
+    
+    // Pause others when audio plays
+    const audio = card.querySelector('audio');
+    if (audio) {
+      audio.addEventListener('play', () => pauseAllMedia(audio));
     }
   });
 }
@@ -122,45 +249,37 @@ function showMediaDetail(item) {
   const detail = document.getElementById('mediaDetail');
   const container = document.getElementById('mediaContainer');
   
-  let preview = '';
-  if (item.type === 'image') {
-    preview = `<img src="${item.link}" alt="${item.title}" class="detail-preview">`;
-  } else if (item.type === 'video') {
-    if (isYouTubeUrl(item.link)) {
-      const id = getYouTubeID(item.link);
-      const embed = id ? getYouTubeEmbedUrl(id) : item.link;
-      // clear any other playing media before embedding a new YouTube iframe
-      pauseAllMedia();
-      stopAllIframes();
-      preview = `<iframe class="detail-preview" src="${embed}" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>`;
-    } else {
-      preview = `<video class="detail-preview" controls><source src="${item.link}"></video>`;
-    }
-  } else if (item.type === 'gif') {
-    preview = `<img src="${item.link}" alt="${item.title}" class="detail-preview">`;
-  } else {
-    preview = `<div class="file-icon-large">📄</div>`;
-  }
+  const preview = getMediaPreview(item, true);
   
   let downloadHtml = '';
   if (isYouTubeUrl(item.link)) {
     downloadHtml = `
       <a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
     `;
-  } else {
+  } else if (item.type !== 'text') {
     downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
-
+  
+  const shareLink = `${window.location.origin}${window.location.pathname.replace('index.html', '')}#${item.slug || item.id}`;
+  
   detail.innerHTML = `
     <div class="detail-header">
       <button class="back-btn" onclick="backToGrid()">← Back</button>
-      ${downloadHtml}
+      <div class="detail-buttons">
+        ${downloadHtml}
+        <button class="share-btn" onclick="copyToClipboard('${shareLink}')">📋 Share Link</button>
+      </div>
     </div>
     <div class="detail-content">
       ${preview}
       <div class="detail-info">
+        <div class="detail-category-badge">${item.category || 'Uncategorized'}</div>
         <h2>${item.title}</h2>
         <p class="description">${item.description}</p>
+        <div class="slug-section">
+          <strong>Link:</strong>
+          <code class="slug-code">argn.quest/${item.slug || item.id}</code>
+        </div>
         <div class="tags-section">
           <strong>Tags:</strong>
           <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
@@ -176,12 +295,24 @@ function showMediaDetail(item) {
   container.classList.add('hidden');
   detail.classList.remove('hidden');
 
-  
+  // Handle text file loading in detail view
+  if (item.type === 'text') {
+    const textElement = detail.querySelector('.text-preview');
+    if (textElement) {
+      loadTextFileContent(item.id, textElement);
+    }
+  }
 
-  // If the detail contains a native video element, attach a 'play' handler to pause others
+  // Pause others when native video plays
   const videoEl = detail.querySelector('video');
   if (videoEl) {
     videoEl.addEventListener('play', () => pauseAllMedia(videoEl));
+  }
+  
+  // Pause others when audio plays
+  const audioEl = detail.querySelector('audio');
+  if (audioEl) {
+    audioEl.addEventListener('play', () => pauseAllMedia(audioEl));
   }
 }
 
@@ -189,27 +320,8 @@ function showMediaDetail(item) {
 function backToGrid() {
   document.getElementById('mediaContainer').classList.remove('hidden');
   document.getElementById('mediaDetail').classList.add('hidden');
-  // stop any playing media and clear iframe src to halt YouTube playback
   pauseAllMedia();
   stopAllIframes();
-}
-
-// Search functionality (case-insensitive, tag-based)
-function searchMedia(query) {
-  const searchTerm = query.toLowerCase().trim();
-  
-  if (!searchTerm) {
-    displayMedia(allMedia);
-    return;
-  }
-  
-  const results = allMedia.filter(item => {
-    return item.tags.some(tag => tag.toLowerCase().includes(searchTerm)) ||
-           item.title.toLowerCase().includes(searchTerm) ||
-           item.description.toLowerCase().includes(searchTerm);
-  });
-  
-  displayMedia(results);
 }
 
 // Event listeners
@@ -217,7 +329,8 @@ document.addEventListener('DOMContentLoaded', () => {
   loadMedia();
   
   const searchInput = document.getElementById('searchInput');
-  searchInput.addEventListener('input', (e) => {
-    searchMedia(e.target.value);
+  searchInput.addEventListener('input', () => {
+    applyFilters();
   });
 });
+

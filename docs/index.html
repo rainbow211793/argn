@@ -4,14 +4,24 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>Argn Archive</title>
+        <title>Argn - Media Archive</title>
         <link rel="stylesheet" href="style.css">
     </head>
     <body>
         <div class="container">
             <h1>Argn</h1>
             <p>"Distribute, Create & Save"</p>
-            <input type="text" placeholder="Search media by tags..." class="search-bar" id="searchInput">
+            
+            <div class="filter-section">
+                <input type="text" placeholder="Search media by tags..." class="search-bar" id="searchInput">
+                
+                <div class="category-filter">
+                    <label for="categorySelect">Filter by Category:</label>
+                    <select id="categorySelect" class="category-select">
+                        <option value="">All Categories</option>
+                    </select>
+                </div>
+            </div>
             
             <div id="mediaContainer" class="media-container"></div>
             <div id="mediaDetail" class="media-detail hidden"></div>
