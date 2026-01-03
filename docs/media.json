@@ -147,7 +147,7 @@
     },
     {
       "id": "11",
-      "type": "photos",
+      "type": "image",
       "slug": "Frihetskorps_logo",
       "category": "Logos",
       "folders": [],
@@ -160,7 +160,7 @@
     },
     {
       "id": "12",
-      "type": "photos",
+      "type": "image",
       "slug": "Frihetskorps_uniform",
       "category": "Uniforms",
       "folders": [],
@@ -173,7 +173,7 @@
     },
     {
       "id": "12",
-      "type": "photos",
+      "type": "image",
       "slug": "SL_armored_car_on_road",
       "category": "Vechiles",
       "folders": [],
@@ -186,7 +186,7 @@
     },
     {
       "id": "12",
-      "type": "photos",
+      "type": "image",
       "slug": "SL_armored_car_on_road",
       "category": "Vechiles",
       "folders": [],
@@ -199,7 +199,7 @@
     },
     {
       "id": "13",
-      "type": "photos",
+      "type": "image",
       "slug": "rainbowtz_island_truth",
       "category": "News post",
       "folders": [],
@@ -209,6 +209,45 @@
       "tags": ["news post", "island", "isle", "rainbowtz", "reveal", "news", "post"],
       "credits": "bjorn.s9",
       "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "14",
+      "type": "image",
+      "slug": "anglion_coup_news",
+      "category": "News post",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/AnglionCoup.webp",
+      "title": "Anglion being couped news",
+      "description": "A news post revealing that anglion was being couped [accurate, sourced from semtex141]",
+      "tags": ["news post", "coup", "angland", "anglion", "reveal", "news", "post"],
+      "credits": "semtex141",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "15",
+      "type": "text",
+      "slug": "rainbowtz_island_plans",
+      "category": "News post",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/rainbowtz_island_planning.txt",
+      "title": "rainbowtz island planning & costs",
+      "description": "A private news post report revealing the planning and costs for rainbowtz island [private, sourced from _blankstate_]",
+      "tags": ["news post", "planning", "rainbowtz island", "island", "costs", "news", "post"],
+      "credits": "_blankstate_",
+      "submitted_by": "rainbow211793, _blankstate_"
+    },
+    {
+      "id": "16",
+      "type": "text",
+      "slug": "rainbowtz_island_plans",
+      "category": "News post",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/nitvaser.mp3",
+      "title": "rainbowtz island planning & costs",
+      "description": "A private news post report revealing the planning and costs for rainbowtz island [private, sourced from _blankstate_]",
+      "tags": ["news post", "planning", "rainbowtz island", "island", "costs", "news", "post"],
+      "credits": "_blankstate_",
+      "submitted_by": "rainbow211793, _blankstate_"
     }
   ]
 }
