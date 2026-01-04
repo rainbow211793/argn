@@ -340,11 +340,14 @@ function showMediaDetail(item) {
     downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
   
+  const shareUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}${item.slug}`;
+  
   detail.innerHTML = `
     <div class="detail-header">
       <button class="back-btn" onclick="backToGrid()">← Back</button>
       <div class="detail-buttons">
         ${downloadHtml}
+        <button class="share-btn" onclick="shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
       </div>
     </div>
     <div class="detail-content">
@@ -395,6 +398,27 @@ function backToGrid() {
   document.getElementById('mediaDetail').classList.add('hidden');
   pauseAllMedia();
   stopAllIframes();
+}
+
+// Share media
+function shareMedia(slug, title) {
+  const shareUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}${slug}`;
+  
+  // Try native share API first
+  if (navigator.share) {
+    navigator.share({
+      title: title,
+      text: `Check out: ${title}`,
+      url: shareUrl
+    }).catch(err => console.log('Share cancelled'));
+  } else {
+    // Fallback: copy to clipboard
+    navigator.clipboard.writeText(shareUrl).then(() => {
+      alert('Link copied to clipboard:\n\n' + shareUrl);
+    }).catch(() => {
+      alert('Share URL:\n\n' + shareUrl);
+    });
+  }
 }
 
 // Event listeners
