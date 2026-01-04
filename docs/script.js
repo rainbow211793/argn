@@ -151,13 +151,27 @@ async function loadMedia() {
     allFolders = data.folders || [];
     filteredMedia = allMedia;
     
-    // Populate folder filter
-    populateFolderFilter();
+    // Check if we're viewing a slug
+    const urlParams = new URLSearchParams(window.location.search);
+    const slug = urlParams.get('slug');
     
-    // Populate category filter
-    populateCategoryFilter();
-    
-    displayMedia(filteredMedia);
+    if (slug) {
+      // Show specific media by slug
+      const media = allMedia.find(m => m.slug === slug);
+      if (media) {
+        showMediaDetail(media);
+      } else {
+        // Slug not found, show gallery
+        populateFolderFilter();
+        populateCategoryFilter();
+        displayMedia(filteredMedia);
+      }
+    } else {
+      // Normal gallery view
+      populateFolderFilter();
+      populateCategoryFilter();
+      displayMedia(filteredMedia);
+    }
   } catch (error) {
     console.error('Error loading media:', error);
   }
