@@ -346,5 +346,197 @@
       "credits": "GuiM2",
       "submitted_by": "rainbow211793"
     }
+  ,
+    {
+  "id": "24",
+  "type": "image",
+  "slug": "first_message_of_gifstad_chat",
+  "category": "Screenshots",
+  "folders": [],
+  "link": "https://file.garden/aVg4wWHpj1W4fShD/firstmessage.png",
+  "title": "First message of Gifstad chat",
+  "description": "This screenshot done by rainbow211793 shows the first messages of gifstad from [now deleted user] GuiM2.",
+  "tags": [
+    "GuiM2",
+    "first message of gifstad",
+    "first",
+    "messages"
+  ],
+  "credits": "GuiM2, rainbow211793",
+  "submitted_by": "rainbow211793"
+    },
+    {
+  "id": "NEW_ID",
+  "type": "text",
+  "slug": "chats_of_the_most_serene_holy_church_of_sebi",
+  "category": "Chatlogs",
+  "folders": [],
+  "link": "https://file.garden/aVg4wWHpj1W4fShD/The%20Most%20Serene%20Holy%20Church%20Of%20Sebi%20-%20Church%20-%20general%20%5B1332377772898910228%5D.html",
+  "title": "Chats of The Most Serene Holy Church Of Sebi",
+  "description": "These are the chats of \"The Most Serene Holy Church Of Sebi\" server in a HTML file.\n\nNotes : Deleted user is just_arandom_guy",
+  "tags": [
+    "chats",
+    "sebi",
+    "church",
+    "church of sebi",
+    "sebi server",
+    "sebi fanboys"
+  ],
+  "credits": "rainbow211793",
+  "submitted_by": "rainbow211793",
+  "attachments": [
+    {
+      "filename": "1f5ff-D6B6E.svg",
+      "size": 767,
+      "type": "image/svg+xml"
+    },
+    {
+      "filename": "1f480-94524.svg",
+      "size": 760,
+      "type": "image/svg+xml"
+    },
+    {
+      "filename": "1f525-8FE4F.svg",
+      "size": 822,
+      "type": "image/svg+xml"
+    },
+    {
+      "filename": "2eb1a595286af46304b686e9eefd0f44-29292.png",
+      "size": 356488,
+      "type": "image/png"
+    },
+    {
+      "filename": "3-FB033.png",
+      "size": 1344,
+      "type": "image/png"
+    },
+    {
+      "filename": "5a68d19495bb86a6b5bfad40dfc1e548-E374E.png",
+      "size": 6379,
+      "type": "image/png"
+    },
+    {
+      "filename": "7cf802d56b75413102bd40362abe98fd-F6394.png",
+      "size": 17435,
+      "type": "image/png"
+    },
+    {
+      "filename": "8fd4f6625317fc2172de840ecf41c6e9-50B79.png",
+      "size": 3969,
+      "type": "image/png"
+    },
+    {
+      "filename": "9bf77fe5413065a783f1eafd64ab32b6-B50D3.png",
+      "size": 73049,
+      "type": "image/png"
+    },
+    {
+      "filename": "037e902cf00fa16191db699f5b118efb-E7A1E.png",
+      "size": 17752,
+      "type": "image/png"
+    },
+    {
+      "filename": "86b0a17d0c415871ec882887a4398403-BEA04.png",
+      "size": 114386,
+      "type": "image/png"
+    },
+    {
+      "filename": "96b31ad2a0ae590fbdba8477d8c131a8-5E678.png",
+      "size": 9032,
+      "type": "image/png"
+    },
+    {
+      "filename": "bb43223e5703cfe08ee573b70d643c13-943F1.png",
+      "size": 91489,
+      "type": "image/png"
+    },
+    {
+      "filename": "c7839e1171a09759b668db695c8ae718-9419D.png",
+      "size": 109819,
+      "type": "image/png"
+    },
+    {
+      "filename": "cute-dog-E568D.mp4",
+      "size": 576782,
+      "type": "video/mp4"
+    },
+    {
+      "filename": "fumblit-roblox-4FDAD.mp4",
+      "size": 94404,
+      "type": "video/mp4"
+    },
+    {
+      "filename": "ggsans-italic-400-E988B.woff2",
+      "size": 25648,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-italic-500-0777F.woff2",
+      "size": 27624,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-italic-600-CB411.woff2",
+      "size": 27612,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-italic-700-891AC.woff2",
+      "size": 27400,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-italic-800-D36B0.woff2",
+      "size": 27516,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-normal-400-1456D.woff2",
+      "size": 25424,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-normal-500-89CE5.woff2",
+      "size": 26460,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-normal-600-C1EA8.woff2",
+      "size": 26636,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-normal-700-1949A.woff2",
+      "size": 26336,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "ggsans-normal-800-58487.woff2",
+      "size": 27076,
+      "type": "font/woff2"
+    },
+    {
+      "filename": "highlight.min-D8D27.js",
+      "size": 48832,
+      "type": "application/x-javascript"
+    },
+    {
+      "filename": "lottie.min-99657.js",
+      "size": 270857,
+      "type": "application/x-javascript"
+    },
+    {
+      "filename": "solarized-dark.min-BA98F.css",
+      "size": 779,
+      "type": "text/css"
+    },
+    {
+      "filename": "Zonder_titel31_20250720221348-55040.png",
+      "size": 325260,
+      "type": "image/png"
+    }
+  ],
+  "note": "⚠️  Files must be uploaded separately and linked in the JSON"
+}
   ]
 }
