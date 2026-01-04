@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Argn</title>
+    <script src="config.js"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #1a2a4a;
+            color: #e0e0e0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+        .container { max-width: 600px; width: 100%; }
+        .form-container {
+            background-color: #0f1b35;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.3);
+        }
+        h1 { margin-bottom: 10px; color: #fff; }
+        p { color: #999; font-size: 14px; margin-bottom: 30px; }
+        .form-group {
+            margin-bottom: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        label {
+            margin-bottom: 8px;
+            font-weight: 500;
+            color: #bbb;
+            font-size: 14px;
+        }
+        input, textarea, select {
+            padding: 12px;
+            border: 1px solid #3a5a7a;
+            border-radius: 5px;
+            background-color: #1a2a4a;
+            color: #e0e0e0;
+            font-size: 14px;
+            font-family: inherit;
+        }
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #5a8aaa;
+            box-shadow: 0 0 0 3px rgba(90, 138, 170, 0.2);
+        }
+        textarea { resize: vertical; min-height: 80px; }
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 30px;
+        }
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-transform: uppercase;
+            font-size: 13px;
+        }
+        .btn-generate {
+            background-color: #3a5a7a;
+            color: white;
+        }
+        .btn-generate:hover { background-color: #2c4563; }
+        .btn-clear {
+            background-color: #2a3a4a;
+            color: #999;
+        }
+        .btn-clear:hover { background-color: #3a4a5a; }
+        .output-section {
+            margin-top: 30px;
+            display: none;
+        }
+        .output-section.active { display: block; }
+        .output-label {
+            color: #999;
+            font-size: 12px;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #jsonOutput {
+            width: 100%;
+            height: 250px;
+            padding: 12px;
+            border: 1px solid #3a5a7a;
+            border-radius: 5px;
+            background-color: #1a2a4a;
+            color: #90ee90;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            resize: vertical;
+        }
+        .copy-btn {
+            margin-top: 10px;
+            padding: 10px 20px;
+            background-color: #27ae60;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            font-size: 13px;
+        }
+        .copy-btn:hover { background-color: #229954; }
+        .copy-btn.copied {
+            background-color: #1e8449;
+        }
+        .lock-section {
+            text-align: center;
+            padding: 40px 20px;
+        }
+        .lock-icon { font-size: 48px; margin-bottom: 20px; }
+        .lock-section h2 { margin-bottom: 20px; color: #999; }
+        input[type="password"] { letter-spacing: 2px; }
+        .error { color: #ff6b6b; font-size: 13px; margin-top: 5px; }
+        .back-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            color: #5a8aaa;
+            text-decoration: none;
+            font-size: 13px;
+        }
+        .back-link:hover { color: #7aaacc; }
+        .file-preview {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #1a2a4a;
+            border-radius: 5px;
+            font-size: 12px;
+            color: #90ee90;
+        }
+        .file-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px;
+            background-color: #0f1b35;
+            margin: 5px 0;
+            border-radius: 3px;
+        }
+        .file-remove {
+            background: #c0392b;
+            color: white;
+            border: none;
+            padding: 3px 8px;
+            border-radius: 3px;
+            cursor: pointer;
+            font-size: 11px;
+        }
+        .file-remove:hover { background: #a93226; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <a href="index.html" class="back-link">← Back to Gallery</a>
+        
+        <div id="lockScreen" class="form-container">
+            <div class="lock-section">
+                <div class="lock-icon">🔒</div>
+                <h2>Access Required</h2>
+                <input type="password" id="passwordInput" placeholder="Password" autofocus>
+                <div id="passwordError" class="error"></div>
+                <button onclick="checkPassword()" style="margin-top: 15px; width: 100%; padding: 12px; background-color: #3a5a7a; color: white; border: none; border-radius: 5px; cursor: pointer; font-weight: 600;">Continue</button>
+            </div>
+        </div>
+
+        <div id="formScreen" class="form-container" style="display: none;">
+            <a href="index.html" class="back-link">← Back to Gallery</a>
+            <h1>Add Media</h1>
+            <p>Generate JSON entry for media.json</p>
+
+            <form id="mediaForm">
+                <div class="form-group">
+                    <label for="title">Title *</label>
+                    <input type="text" id="title" required placeholder="Media title">
+                </div>
+
+                <div class="form-group">
+                    <label for="description">Description *</label>
+                    <textarea id="description" required placeholder="Short description"></textarea>
+                </div>
+
+                <div class="form-group">
+                    <label for="type">Type *</label>
+                    <select id="type" required>
+                        <option value="">Select type</option>
+                        <option value="image">Image</option>
+                        <option value="video">Video</option>
+                        <option value="gif">GIF</option>
+                        <option value="audio">Audio</option>
+                        <option value="text">Text</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="category">Category *</label>
+                    <input type="text" id="category" required placeholder="e.g., Music, Memes">
+                </div>
+
+                <div class="form-group">
+                    <label for="link">Link/URL *</label>
+                    <input type="url" id="link" required placeholder="https://...">
+                </div>
+
+                <div class="form-group">
+                    <label for="tags">Tags * (comma-separated)</label>
+                    <input type="text" id="tags" required placeholder="tag1, tag2, tag3">
+                </div>
+
+                <div class="form-group">
+                    <label for="credits">Credits *</label>
+                    <input type="text" id="credits" required placeholder="Creator name">
+                </div>
+
+                <div class="form-group">
+                    <label for="submitted_by">Submitted by *</label>
+                    <input type="text" id="submitted_by" required placeholder="Username">
+                </div>
+
+                <div class="form-group">
+                    <label for="folders">Folders (comma-separated, optional)</label>
+                    <input type="text" id="folders" placeholder="youtube, music">
+                </div>
+
+                <div class="form-group">
+                    <label for="files">Attach Files (optional)</label>
+                    <input type="file" id="files" multiple accept="*/*">
+                    <div id="filePreview" class="file-preview" style="display: none;"></div>
+                </div>
+
+                <div class="btn-group">
+                    <button type="button" class="btn-generate" onclick="generateJSON()">Generate JSON</button>
+                    <button type="reset" class="btn-clear">Clear</button>
+                </div>
+            </form>
+
+            <div id="outputSection" class="output-section">
+                <div class="output-label">JSON Output - Copy & Paste into media.json</div>
+                <textarea id="jsonOutput" readonly></textarea>
+                <button class="copy-btn" onclick="copyJSON()">📋 Copy to Clipboard</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ===== LOAD PASSWORD FROM CONFIG =====
+        // Password is stored in config.js (git-ignored) - not hardcoded here!
+        let PASSWORD = "password1234.com"; // Fallback if config.js not found
+        
+        if (typeof CONFIG !== 'undefined' && CONFIG.PASSWORD) {
+            PASSWORD = CONFIG.PASSWORD;
+        } else {
+            console.warn("⚠️  config.js not found! Copy config.example.js to config.js and set your password.");
+        }
+
+        let selectedFiles = [];
+        
+        function checkPassword() {
+            const pwd = document.getElementById("passwordInput").value;
+            const error = document.getElementById("passwordError");
+            
+            if (pwd === PASSWORD) {
+                document.getElementById("passwordInput").value = "";
+                document.getElementById("lockScreen").style.display = "none";
+                document.getElementById("formScreen").style.display = "block";
+                document.getElementById("title").focus();
+            } else {
+                error.textContent = "Incorrect password";
+                document.getElementById("passwordInput").value = "";
+                document.getElementById("passwordInput").focus();
+            }
+        }
+
+        document.getElementById("passwordInput").addEventListener("keypress", (e) => {
+            if (e.key === "Enter") checkPassword();
+        });
+
+        // File handling
+        document.getElementById("files").addEventListener("change", (e) => {
+            selectedFiles = Array.from(e.target.files).map(f => ({
+                name: f.name,
+                size: f.size,
+                type: f.type,
+                lastModified: f.lastModified
+            }));
+            
+            updateFilePreview();
+        });
+
+        function updateFilePreview() {
+            const preview = document.getElementById("filePreview");
+            
+            if (selectedFiles.length === 0) {
+                preview.style.display = "none";
+                return;
+            }
+            
+            preview.style.display = "block";
+            preview.innerHTML = "<strong>Selected Files:</strong><br>";
+            
+            selectedFiles.forEach((file, idx) => {
+                const size = (file.size / 1024).toFixed(1);
+                preview.innerHTML += `
+                    <div class="file-item">
+                        <span>📄 ${file.name} (${size}KB)</span>
+                        <button type="button" class="file-remove" onclick="removeFile(${idx})">Remove</button>
+                    </div>
+                `;
+            });
+        }
+
+        function removeFile(idx) {
+            selectedFiles.splice(idx, 1);
+            document.getElementById("files").value = "";
+            updateFilePreview();
+        }
+
+        function generateSlug(title) {
+            return title
+                .toLowerCase()
+                .trim()
+                .replace(/[^\w\s-]/g, "")
+                .replace(/[\s_-]+/g, "_")
+                .replace(/^-+|-+$/g, "");
+        }
+
+        function generateJSON() {
+            const form = document.getElementById("mediaForm");
+            if (!form.checkValidity()) {
+                alert("Please fill all required fields");
+                return;
+            }
+
+            const title = document.getElementById("title").value;
+            const description = document.getElementById("description").value;
+            const type = document.getElementById("type").value;
+            const category = document.getElementById("category").value;
+            const link = document.getElementById("link").value;
+            const tags = document.getElementById("tags").value.split(",").map(t => t.trim());
+            const credits = document.getElementById("credits").value;
+            const submitted_by = document.getElementById("submitted_by").value;
+            const folders = document.getElementById("folders").value
+                ? document.getElementById("folders").value.split(",").map(f => f.trim())
+                : [];
+
+            const entry = {
+                id: "NEW_ID",
+                type: type,
+                slug: generateSlug(title),
+                category: category,
+                folders: folders,
+                link: link,
+                title: title,
+                description: description,
+                tags: tags,
+                credits: credits,
+                submitted_by: submitted_by
+            };
+
+            // Add files if any selected
+            if (selectedFiles.length > 0) {
+                entry.attachments = selectedFiles.map(f => ({
+                    filename: f.name,
+                    size: f.size,
+                    type: f.type
+                }));
+                entry.note = "⚠️  Files must be uploaded separately and linked in the JSON";
+            }
+
+            document.getElementById("jsonOutput").value = JSON.stringify(entry, null, 2);
+            document.getElementById("outputSection").classList.add("active");
+        }
+
+        function copyJSON() {
+            const textarea = document.getElementById("jsonOutput");
+            textarea.select();
+            document.execCommand("copy");
+            
+            const btn = event.target;
+            const originalText = btn.textContent;
+            btn.textContent = "✅ Copied!";
+            btn.classList.add("copied");
+            
+            setTimeout(() => {
+                btn.textContent = originalText;
+                btn.classList.remove("copied");
+            }, 2000);
+        }
+    </script>
+</body>
+</html>

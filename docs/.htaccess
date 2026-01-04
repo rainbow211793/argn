@@ -1,0 +1,17 @@
+# Redirect argn.quest/add to the secure form
+# Add this to your .htaccess file or create a new one in website/ folder
+
+# Enable mod_rewrite
+RewriteEngine On
+RewriteBase /
+
+# Redirect /add to the secure form file
+RewriteRule ^add/?$ s1D7kQ2nXpR.html [L,QSA]
+
+# Route slug URLs to index.html (e.g., /gifstad_flag_first -> index.html?slug=gifstad_flag_first)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_URI} !^/index\.html$ [NC]
+RewriteCond %{REQUEST_URI} !^/s1D7k [NC]
+RewriteCond %{REQUEST_URI} !^/website/ [NC]
+RewriteRule ^([a-zA-Z0-9_-]+)/?$ index.html?slug=$1 [L,QSA]
