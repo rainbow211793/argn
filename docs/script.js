@@ -407,18 +407,21 @@ function backToGrid() {
 
 // Share media
 function shareMedia(slug, title) {
-  const shareUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}${slug}`;
+  const shareUrl = `https://argn.quest/index.html?slug=${slug}`;
   
   // Show modal popup
   const modal = document.createElement('div');
   modal.id = 'shareModal';
+  modal.onclick = (e) => {
+    if (e.target === modal) closeShareModal();
+  };
   modal.style.cssText = `
     position: fixed;
     top: 0;
     left: 0;
     width: 100%;
     height: 100%;
-    background: rgba(0,0,0,0.7);
+    background: rgba(0,0,0,0.8);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -429,52 +432,62 @@ function shareMedia(slug, title) {
     <div style="
       background: #0f1b35;
       padding: 30px;
-      border-radius: 8px;
-      max-width: 500px;
+      border-radius: 12px;
+      max-width: 450px;
       width: 90%;
       text-align: center;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+      box-shadow: 0 12px 48px rgba(0,0,0,0.8);
+      border: 1px solid #3a5a7a;
     ">
-      <h3 style="margin-top: 0; color: #fff; margin-bottom: 20px;">Share This</h3>
+      <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 20px;">Share</h2>
+      <p style="margin: 0 0 20px 0; color: #999; font-size: 13px;">${title}</p>
+      
       <div style="
         display: flex;
-        gap: 10px;
+        gap: 8px;
         background: #1a2a4a;
         padding: 12px;
         border-radius: 6px;
         margin-bottom: 20px;
         align-items: center;
+        border: 1px solid #3a5a7a;
       ">
         <input type="text" value="${shareUrl}" readonly style="
           flex: 1;
-          background: #2a3a5a;
-          border: 1px solid #3a5a7a;
-          color: #e0e0e0;
-          padding: 10px;
+          background: transparent;
+          border: none;
+          color: #5a8aaa;
+          padding: 8px;
           border-radius: 4px;
-          font-size: 14px;
+          font-size: 12px;
           font-family: monospace;
+          outline: none;
         ">
         <button onclick="copyShareLink('${shareUrl}')" style="
           background: #27ae60;
           color: white;
           border: none;
-          padding: 10px 16px;
+          padding: 8px 16px;
           border-radius: 4px;
           cursor: pointer;
           font-weight: 600;
+          font-size: 12px;
           white-space: nowrap;
-        ">📋 Copy</button>
+          transition: background 0.3s;
+        " onmouseover="this.style.background='#229954'" onmouseout="this.style.background='#27ae60'">📋 Copy</button>
       </div>
+      
       <button onclick="closeShareModal()" style="
-        background: #3a5a7a;
-        color: white;
-        border: none;
+        background: #2a3a5a;
+        color: #e0e0e0;
+        border: 1px solid #3a5a7a;
         padding: 10px 24px;
-        border-radius: 4px;
+        border-radius: 6px;
         cursor: pointer;
         font-weight: 600;
-      ">Close</button>
+        font-size: 13px;
+        transition: all 0.3s;
+      " onmouseover="this.style.background='#3a4a6a'" onmouseout="this.style.background='#2a3a5a'">Close</button>
     </div>
   `;
   
@@ -487,6 +500,49 @@ function copyShareLink(url) {
     const original = btn.textContent;
     btn.textContent = '✅ Copied!';
     btn.style.background = '#1e8449';
+    
+    // Show toast notification
+    const toast = document.createElement('div');
+    toast.textContent = '✅ Link copied to clipboard!';
+    toast.style.cssText = `
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #27ae60;
+      color: white;
+      padding: 12px 20px;
+      border-radius: 6px;
+      font-weight: 600;
+      z-index: 10000;
+      font-size: 14px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      animation: slideUp 0.3s ease;
+    `;
+    
+    // Add animation
+    const style = document.createElement('style');
+    style.textContent = `
+      @keyframes slideUp {
+        from {
+          opacity: 0;
+          transform: translateX(-50%) translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateX(-50%) translateY(0);
+        }
+      }
+    `;
+    document.head.appendChild(style);
+    document.body.appendChild(toast);
+    
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transition = 'opacity 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 2000);
+    
     setTimeout(() => {
       btn.textContent = original;
       btn.style.background = '#27ae60';
