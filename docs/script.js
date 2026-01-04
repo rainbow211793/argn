@@ -394,31 +394,109 @@ function showMediaDetail(item) {
 
 // Back to grid view
 function backToGrid() {
-  document.getElementById('mediaContainer').classList.remove('hidden');
-  document.getElementById('mediaDetail').classList.add('hidden');
-  pauseAllMedia();
-  stopAllIframes();
+  // If we're on a slug page, go back to gallery root
+  if (new URLSearchParams(window.location.search).get('slug')) {
+    window.history.back();
+  } else {
+    document.getElementById('mediaContainer').classList.remove('hidden');
+    document.getElementById('mediaDetail').classList.add('hidden');
+    pauseAllMedia();
+    stopAllIframes();
+  }
 }
 
 // Share media
 function shareMedia(slug, title) {
   const shareUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}${slug}`;
   
-  // Try native share API first
-  if (navigator.share) {
-    navigator.share({
-      title: title,
-      text: `Check out: ${title}`,
-      url: shareUrl
-    }).catch(err => console.log('Share cancelled'));
-  } else {
-    // Fallback: copy to clipboard
-    navigator.clipboard.writeText(shareUrl).then(() => {
-      alert('Link copied to clipboard:\n\n' + shareUrl);
-    }).catch(() => {
-      alert('Share URL:\n\n' + shareUrl);
-    });
-  }
+  // Show modal popup
+  const modal = document.createElement('div');
+  modal.id = 'shareModal';
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  `;
+  
+  modal.innerHTML = `
+    <div style="
+      background: #0f1b35;
+      padding: 30px;
+      border-radius: 8px;
+      max-width: 500px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    ">
+      <h3 style="margin-top: 0; color: #fff; margin-bottom: 20px;">Share This</h3>
+      <div style="
+        display: flex;
+        gap: 10px;
+        background: #1a2a4a;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        align-items: center;
+      ">
+        <input type="text" value="${shareUrl}" readonly style="
+          flex: 1;
+          background: #2a3a5a;
+          border: 1px solid #3a5a7a;
+          color: #e0e0e0;
+          padding: 10px;
+          border-radius: 4px;
+          font-size: 14px;
+          font-family: monospace;
+        ">
+        <button onclick="copyShareLink('${shareUrl}')" style="
+          background: #27ae60;
+          color: white;
+          border: none;
+          padding: 10px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+          white-space: nowrap;
+        ">📋 Copy</button>
+      </div>
+      <button onclick="closeShareModal()" style="
+        background: #3a5a7a;
+        color: white;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 4px;
+        cursor: pointer;
+        font-weight: 600;
+      ">Close</button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
+}
+
+function copyShareLink(url) {
+  navigator.clipboard.writeText(url).then(() => {
+    const btn = event.target;
+    const original = btn.textContent;
+    btn.textContent = '✅ Copied!';
+    btn.style.background = '#1e8449';
+    setTimeout(() => {
+      btn.textContent = original;
+      btn.style.background = '#27ae60';
+    }, 2000);
+  });
+}
+
+function closeShareModal() {
+  const modal = document.getElementById('shareModal');
+  if (modal) modal.remove();
 }
 
 // Event listeners
