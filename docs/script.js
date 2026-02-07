@@ -100,6 +100,11 @@ function getMediaPreview(item, isDetail = false) {
   } else if (item.type === 'text') {
     // For text files, display truncated content
     return `<div class="${baseClass} text-preview" data-media-id="${item.id}">Loading text...</div>`;
+  } else if (item.type === 'folder') {
+    const folder = allFolders.find(f => f.id === item.id.replace('folder-', ''));
+    const color = folder ? folder.color || '#3a5a7a' : '#3a5a7a';
+    const height = isDetail ? '400px' : '200px';
+    return `<div class="file-icon${isDetail ? '-large' : ''}" style="height: ${height}; background-color: ${color};">📂</div>`;
   } else {
     const icon = item.type === 'text' ? '📄' : item.type === 'audio' ? '🎵' : '📄';
     const height = isDetail ? '400px' : '200px';
@@ -149,11 +154,40 @@ async function loadMedia() {
     const data = await response.json();
     allMedia = data.media;
     allFolders = data.folders || [];
+    
+    // Add pseudo media for folders
+    allFolders.forEach(folder => {
+      allMedia.push({
+        id: 'folder-' + folder.id,
+        type: 'folder',
+        slug: 'folder-' + folder.id,
+        category: 'Folders',
+        folders: [],
+        link: '',
+        title: folder.name,
+        description: folder.description,
+        tags: ['folder'],
+        credits: '',
+        submitted_by: ''
+      });
+    });
+    
+    // Randomize order but keep Gifstad flag first
+    let flagItem = allMedia.find(m => m.id === '1');
+    allMedia = allMedia.filter(m => m.id !== '1');
+    allMedia.sort(() => Math.random() - 0.5);
+    if (flagItem) allMedia.unshift(flagItem);
+    
     filteredMedia = allMedia;
     
-    // Check if we're viewing a slug
+    // Check if we're viewing a slug or folder
     const urlParams = new URLSearchParams(window.location.search);
     const slug = urlParams.get('slug');
+    const folderParam = urlParams.get('folder');
+    
+    if (folderParam) {
+      selectedFolder = folderParam;
+    }
     
     if (slug) {
       // Show specific media by slug
@@ -162,13 +196,11 @@ async function loadMedia() {
         showMediaDetail(media);
       } else {
         // Slug not found, show gallery
-        populateFolderFilter();
         populateCategoryFilter();
         displayMedia(filteredMedia);
       }
     } else {
       // Normal gallery view
-      populateFolderFilter();
       populateCategoryFilter();
       displayMedia(filteredMedia);
     }
@@ -216,9 +248,6 @@ function populateFolderFilter() {
 function applyFilters() {
   const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
   
-  // Filter folders
-  filterFolders(searchTerm);
-  
   filteredMedia = allMedia.filter(item => {
     const matchCategory = !selectedCategory || item.category === selectedCategory;
     const matchFolder = !selectedFolder || (item.folders && item.folders.includes(selectedFolder));
@@ -233,43 +262,18 @@ function applyFilters() {
   displayMedia(filteredMedia);
 }
 
-// Filter folders by search term
-function filterFolders(searchTerm) {
-  document.querySelectorAll('.folder-card').forEach((card, index) => {
-    if (index === 0) {
-      // Always show "All" button
-      card.style.display = 'flex';
-      return;
-    }
-    
-    const folderName = card.querySelector('.folder-name').textContent.toLowerCase();
-    if (!searchTerm || folderName.includes(searchTerm)) {
-      card.style.display = 'flex';
-    } else {
-      card.style.display = 'none';
-    }
-  });
-}
-
 // Filter by folder
 function filterByFolder(folderId) {
   selectedFolder = folderId;
   
-  // Update active folder card
-  document.querySelectorAll('.folder-card').forEach(card => {
-    card.classList.remove('active');
-  });
-  
-  if (!folderId) {
-    document.querySelector('.all-folders-card').classList.add('active');
+  // Update URL
+  const url = new URL(window.location);
+  if (folderId) {
+    url.searchParams.set('folder', folderId);
   } else {
-    const folders = document.querySelectorAll('.folder-card:not(.all-folders-card)');
-    folders.forEach((card, index) => {
-      if (allFolders[index] && allFolders[index].id === folderId) {
-        card.classList.add('active');
-      }
-    });
+    url.searchParams.delete('folder');
   }
+  window.history.replaceState(null, '', url);
   
   applyFilters();
 }
@@ -290,16 +294,29 @@ function displayMedia(mediaList) {
     
     const preview = getMediaPreview(item, false);
     
-    card.innerHTML = `
-      ${preview}
-      <div class="card-info">
-        <div class="card-category">${item.category || 'Uncategorized'}</div>
-        <h3>${item.title}</h3>
-        <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
-      </div>
-    `;
+    if (item.type === 'folder') {
+      card.innerHTML = `
+        ${preview}
+        <div class="card-info">
+          <div class="card-category">${item.category || 'Uncategorized'}</div>
+          <h3>${item.title}</h3>
+          <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
+          <button class="share-btn" onclick="shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
+        </div>
+      `;
+      card.addEventListener('click', () => filterByFolder(item.id.replace('folder-', '')));
+    } else {
+      card.innerHTML = `
+        ${preview}
+        <div class="card-info">
+          <div class="card-category">${item.category || 'Uncategorized'}</div>
+          <h3>${item.title}</h3>
+          <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
+        </div>
+      `;
+      card.addEventListener('click', () => showMediaDetail(item));
+    }
     
-    card.addEventListener('click', () => showMediaDetail(item));
     container.appendChild(card);
 
     // Handle text file loading in cards
@@ -332,7 +349,9 @@ function showMediaDetail(item) {
   const preview = getMediaPreview(item, true);
   
   let downloadHtml = '';
-  if (isYouTubeUrl(item.link)) {
+  if (item.type === 'folder') {
+    // No download for folders
+  } else if (isYouTubeUrl(item.link)) {
     downloadHtml = `
       <a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
     `;
@@ -340,14 +359,15 @@ function showMediaDetail(item) {
     downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
   
-  const shareUrl = `${window.location.origin}${window.location.pathname.replace('index.html', '')}${item.slug}`;
+  const shareUrl = item.type === 'folder' ? `${window.location.origin}${window.location.pathname}?folder=${item.id.replace('folder-', '')}` : `${window.location.origin}${window.location.pathname.replace('index.html', '')}${item.slug}`;
+  const shareFunction = item.type === 'folder' ? `shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')` : `shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')`;
   
   detail.innerHTML = `
     <div class="detail-header">
       <button class="back-btn" onclick="backToGrid()">← Back</button>
       <div class="detail-buttons">
         ${downloadHtml}
-        <button class="share-btn" onclick="shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
+        <button class="share-btn" onclick="${shareFunction}">📤 Share</button>
       </div>
     </div>
     <div class="detail-content">
@@ -355,14 +375,14 @@ function showMediaDetail(item) {
       <div class="detail-info">
         <div class="detail-category-badge">${item.category || 'Uncategorized'}</div>
         <h2>${item.title}</h2>
-        <p class="description">${item.description}</p>
+        <div class="description">${marked.parse((item.description || '').replace(/\|\|/g, '\n\n'))}</div>
         <div class="tags-section">
           <strong>Tags:</strong>
           <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
         </div>
         <div class="credits-section">
-          <p><strong>Credits:</strong> ${item.credits}</p>
-          <p><strong>Submitted by:</strong> ${item.submitted_by}</p>
+          <p><strong>Credits:</strong> ${item.credits || ''}</p>
+          <p><strong>Submitted by:</strong> ${item.submitted_by || ''}</p>
         </div>
       </div>
     </div>
@@ -548,6 +568,94 @@ function copyShareLink(url) {
       btn.style.background = '#27ae60';
     }, 2000);
   });
+}
+
+function shareFolder(folderId, title) {
+  const shareUrl = `${window.location.origin}${window.location.pathname}?folder=${folderId}`;
+  
+  // Show modal popup
+  const modal = document.createElement('div');
+  modal.id = 'shareModal';
+  modal.onclick = (e) => {
+    if (e.target === modal) closeShareModal();
+  };
+  modal.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.8);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+  `;
+  
+  modal.innerHTML = `
+    <div style="
+      background: #0f1b35;
+      padding: 30px;
+      border-radius: 12px;
+      max-width: 450px;
+      width: 90%;
+      text-align: center;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.8);
+      border: 1px solid #3a5a7a;
+    ">
+      <h2 style="margin: 0 0 10px 0; color: #fff; font-size: 20px;">Share</h2>
+      <p style="margin: 0 0 20px 0; color: #999; font-size: 13px;">${title}</p>
+      
+      <div style="
+        display: flex;
+        gap: 8px;
+        background: #1a2a4a;
+        padding: 12px;
+        border-radius: 6px;
+        margin-bottom: 20px;
+        align-items: center;
+        border: 1px solid #3a5a7a;
+      ">
+        <input type="text" value="${shareUrl}" readonly style="
+          flex: 1;
+          background: transparent;
+          border: none;
+          color: #5a8aaa;
+          padding: 8px;
+          border-radius: 4px;
+          font-size: 12px;
+          font-family: monospace;
+          outline: none;
+        ">
+        <button onclick="copyShareLink('${shareUrl}')" style="
+          background: #27ae60;
+          color: white;
+          border: none;
+          padding: 8px 16px;
+          border-radius: 4px;
+          cursor: pointer;
+          font-weight: 600;
+          font-size: 12px;
+          white-space: nowrap;
+          transition: background 0.3s;
+        " onmouseover="this.style.background='#229954'" onmouseout="this.style.background='#27ae60'">📋 Copy</button>
+      </div>
+      
+      <button onclick="closeShareModal()" style="
+        background: #2a3a5a;
+        color: #e0e0e0;
+        border: 1px solid #3a5a7a;
+        padding: 10px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 13px;
+        transition: all 0.3s;
+      " onmouseover="this.style.background='#3a4a6a'" onmouseout="this.style.background='#2a3a5a'">Close</button>
+    </div>
+  `;
+  
+  document.body.appendChild(modal);
 }
 
 function closeShareModal() {
