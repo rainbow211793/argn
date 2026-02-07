@@ -446,13 +446,26 @@
     {
       "id": "31",
       "type": "image",
-      "slug": "registrationofGNP",
+      "slug": "GNPlogolarge",
       "category": "Logos",
       "folders": [],
       "link": "https://file.garden/aVg4wWHpj1W4fShD/gifstad-more/GNPlogo.png",
       "title": "GNP logo [Large]",
       "description": "The GNP's Logo [809x530 pixels] enlarged [1/2 images] by a party ran by bjorn.28 known as thewarrior792 at the time.",
       "tags": ["bjorn", "GNP", "logo", "GNP logo", "large logo", "809x530", "thewarrior792"],
+      "credits": "bjorn.28 / bjorn.s9",
+      "submitted_by": "rainbow211793 / bjorn.28 / bjorn.s9"
+    },
+    {
+      "id": "32",
+      "type": "image",
+      "slug": "party-info-registration",
+      "category": "Screenshots",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/gifstad-more/Party%5B2%5Dinfo-registration.png",
+      "title": "Registration of PP and GGP",
+      "description": "This screenshot details the registration of the PP [The Potato Party] and the GGP [The Grand Gifstadian Party].",
+      "tags": ["UltraBear", "PP", "potato", "GGP", "grand gifstadian party", "grand", "potato islands"],
       "credits": "bjorn.28 / bjorn.s9",
       "submitted_by": "rainbow211793 / bjorn.28 / bjorn.s9"
     }
