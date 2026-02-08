@@ -514,3 +514,318 @@ body {
         text-align: center;
     }
 }
+
+/* Wordle Minigame */
+.minigame {
+    width: 90vw;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #1a1a2e;
+    border: 1px solid #0f3460;
+    border-radius: 12px;
+    text-align: center;
+    color: #a0b0d0;
+    box-sizing: border-box;
+}
+
+.minigame h3 {
+    color: #e94560;
+    margin-bottom: 15px;
+    font-size: 1.5em;
+}
+
+.minigame p {
+    margin-bottom: 20px;
+    font-size: 1.1em;
+}
+
+.wordle-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin: 30px 0;
+    align-items: center;
+}
+
+.wordle-row {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+}
+
+.wordle-cell {
+    min-width: 45px;
+    min-height: 45px;
+    width: calc(100vw / 12);
+    max-width: 60px;
+    aspect-ratio: 1;
+    border: 2px solid #0f3460;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: clamp(18px, 4vw, 24px);
+    font-weight: bold;
+    font-family: monospace;
+    background: #16213e;
+    color: #a0b0d0;
+    box-sizing: border-box;
+}
+
+.wordle-cell.correct { background: #22c55e; color: white; }
+.wordle-cell.present { background: #f59e0b; color: white; }
+.wordle-cell.absent { background: #6b7280; color: white; }
+
+.minigame input {
+    padding: 12px 16px;
+    font-size: 18px;
+    border: 2px solid #0f3460;
+    border-radius: 6px;
+    background: #16213e;
+    color: #a0b0d0;
+    text-align: center;
+    font-family: monospace;
+    text-transform: uppercase;
+    margin: 15px 0;
+    width: 200px;
+    max-width: 80%;
+}
+
+.minigame input:focus {
+    outline: none;
+    border-color: #e94560;
+}
+
+.minigame button {
+    padding: 12px 24px;
+    background: #e94560;
+    color: white;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 10px;
+    transition: background 0.3s ease;
+}
+
+.minigame button:hover { background: #d63d55; }
+
+.minigame .input-row {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin: 20px 0;
+}
+
+#wordleMessage {
+    margin-top: 20px;
+    font-weight: bold;
+    font-size: 1.1em;
+    min-height: 24px;
+}
+
+/* Mobile responsiveness for Wordle minigame */
+@media (max-width: 768px) {
+    .minigame {
+        width: 95vw;
+        padding: 20px;
+        margin: 20px auto;
+    }
+    
+    .minigame h3 {
+        font-size: 1.3em;
+    }
+    
+    .wordle-cell {
+        min-width: 35px;
+        min-height: 35px;
+        width: calc(100vw / 15);
+        max-width: 45px;
+        font-size: clamp(14px, 3.5vw, 18px);
+    }
+    
+    .minigame input {
+        width: 150px;
+        font-size: 16px;
+        padding: 10px;
+    }
+    
+    .minigame button {
+        padding: 10px 16px;
+        font-size: 14px;
+    }
+    
+    .input-row {
+        flex-direction: column;
+        gap: 12px;
+    }
+}
+
+@media (max-width: 480px) {
+    .minigame {
+        width: 98vw;
+        padding: 15px;
+    }
+    
+    .wordle-cell {
+        min-width: 30px;
+        min-height: 30px;
+        width: calc(100vw / 18);
+        max-width: 40px;
+        gap: 4px;
+    }
+    
+    .wordle-row {
+        gap: 4px;
+    }
+    
+    .wordle-grid {
+        gap: 6px;
+        margin: 20px 0;
+    }
+}
+
+/* Zombie Shooter Game */
+#zombieGame {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.95);
+    z-index: 10000;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    color: white;
+}
+
+.game-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    max-width: 820px;
+    margin-bottom: 20px;
+    padding: 0 20px;
+}
+
+.game-header h2 {
+    color: #ff4444;
+    margin: 0;
+}
+
+.game-header button {
+    background: #333;
+    color: white;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 10px;
+    border-radius: 4px;
+}
+
+.game-header button:hover {
+    background: #555;
+}
+
+#gameCanvas {
+    border: 2px solid #444;
+    background: #000;
+    max-width: 100%;
+    height: auto;
+}
+
+.game-info {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+    margin-top: 15px;
+    font-size: 18px;
+    padding: 0 10px;
+}
+
+.mobile-controls {
+    margin-top: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+}
+
+.dpad {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 5px;
+}
+
+.dpad button {
+    width: 50px;
+    height: 50px;
+    background: #444;
+    color: white;
+    border: 2px solid #666;
+    border-radius: 8px;
+    font-size: 20px;
+    font-weight: bold;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.dpad button:active {
+    background: #666;
+    transform: scale(0.95);
+}
+
+.dpad-middle {
+    display: flex;
+    gap: 5px;
+}
+
+#shootBtn {
+    background: #ff4444;
+    color: white;
+    border: none;
+    padding: 15px 30px;
+    font-size: 18px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
+    min-width: 150px;
+}
+
+#shootBtn:active {
+    background: #cc3333;
+    transform: scale(0.95);
+}
+
+@media (max-width: 768px) {
+    #zombieGame {
+        padding: 10px;
+    }
+
+    .game-header {
+        max-width: 100%;
+        padding: 0;
+    }
+
+    .game-info {
+        flex-direction: column;
+        align-items: center;
+        gap: 10px;
+        max-width: 100%;
+        font-size: 16px;
+    }
+
+    #gameCanvas {
+        max-width: calc(100vw - 20px);
+        max-height: calc(100vh - 200px);
+    }
+}

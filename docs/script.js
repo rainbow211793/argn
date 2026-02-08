@@ -278,13 +278,548 @@ function filterByFolder(folderId) {
   applyFilters();
 }
 
+// Simple Wordle minigame
+const wordleWords = [
+  // 3-letter words
+  'SEB', 'LEM', 'BJO', 'SEI', 'LEI', 'BJI', 'SEO', 'LEO', 'BJO', 'SEU',
+  'LEU', 'BJU', 'SEE', 'LEE', 'BJE', 'SEM', 'LEM', 'BJM', 'SEK', 'LEK',
+  'BJK', 'SEL', 'LEL', 'BJL', 'SER', 'LER', 'BJR', 'BEX', 'LEX', 'BJX',
+  'SEB', 'LEM', 'BJO', 'SEI', 'LEI', 'BJI', 'SEO', 'LEO', 'BJO', 'SEU',
+  'LEU', 'BJU', 'SEE', 'LEE', 'BJE', 'SEM', 'LEM', 'BJM', 'SEK', 'LEK',
+  'BJK', 'SEL', 'LEL', 'BJL', 'SER', 'LER', 'BJR', 'BEX', 'LEX', 'BJX',
+  'SEB', 'LEM', 'BJO', 'SEI', 'LEI', 'BJI', 'SEO', 'LEO', 'BJO', 'SEU',
+  'LEU', 'BJU', 'SEE', 'LEE', 'BJE', 'SEM', 'LEM', 'BJM', 'SEK', 'LEK',
+  'BJK', 'SEL', 'LEL', 'BJL', 'SER', 'LER', 'BJR', 'BEX', 'LEX', 'BJX', "RLY"
+  
+  // 4-letter words
+  ,'SEBI', 'LEME', 'BJOR', 'SEBL', 'LEMB', 'BJRN', 'SEBR', 'LEMR', 'BJRR', 'SEBX',
+  'LEMX', 'BJRX', 'SEBO', 'LEMO', 'BJRO', 'SEBU', 'LEMU', 'BJRU', 'SEBE', 'LEME',
+  'BJRE', 'SEBM', 'LEMM', 'BJRM', 'SEBK', 'LEMK', 'BJRK', 'SEBL', 'LEMB', 'BJRN',
+  'SEBR', 'LEMR', 'BJRR', 'SEBX', 'LEMX', 'BJRX', 'SEBO', 'LEMO', 'BJRO', 'SEBU',
+  'LEMU', 'BJRU', 'SEBE', 'LEME', 'BJRE', 'SEBM', 'LEMM', 'BJRM', 'SEBK', 'LEMK',
+  'BJRK', 'SEBL', 'LEMB', 'BJRN', 'SEBR', 'LEMR', 'BJRR', 'SEBX', 'LEMX', 'BJRX',
+  'SEBO', 'LEMO', 'BJRO', 'SEBU', 'LEMU', 'BJRU', 'SEBE', 'LEME', 'BJRE', 'SEBM',
+  'LEMM', 'BJRM', 'SEBK', 'LEMK', 'BJRK', 'SEBL', 'LEMB', 'BJRN', 'SEBR', 'LEMR',
+  'BJRR', 'SEBX', 'LEMX', 'BJRX', 'SEBO', 'LEMO', 'BJRO', 'SEBU', 'LEMU', 'BJRU'
+  
+  // 5-letter words
+  ,'LEMEN', 'BJORN', 'SEBIL', 'LEMBJ', 'BJRNA', 'SEBIR', 'LEMIR', 'BJRIR', 'SEBIX', 'LEMIX',
+  'BJRIX', 'SEBIO', 'LEMIO', 'BJRIO', 'SEBIU', 'LEMIU', 'BJRIU', 'SEBIE', 'LEMIE', 'BJRIE',
+  'SEBIM', 'LEMIM', 'BJRIM', 'SEBIK', 'LEMIK', 'BJRIK', 'SEBIL', 'LEMBJ', 'BJRNA', 'SEBIR',
+  'LEMIR', 'BJRIR', 'SEBIX', 'LEMIX', 'BJRIX', 'SEBIO', 'LEMIO', 'BJRIO', 'SEBIU', 'LEMIU',
+  'BJRIU', 'SEBIE', 'LEMIE', 'BJRIE', 'SEBIM', 'LEMIM', 'BJRIM', 'SEBIK', 'LEMIK', 'BJRIK',
+  'SEBIL', 'LEMBJ', 'BJRNA', 'SEBIR', 'LEMIR', 'BJRIR', 'SEBIX', 'LEMIX', 'BJRIX', 'SEBIO',
+  'LEMIO', 'BJRIO', 'SEBIU', 'LEMIU', 'BJRIU', 'SEBIE', 'LEMIE', 'BJRIE', 'SEBIM', 'LEMIM',
+  'BJRIM', 'SEBIK', 'LEMIK', 'BJRIK', 'SEBIL', 'LEMBJ', 'BJRNA', 'SEBIR', 'LEMIR', 'BJRIR',
+  'SEBIX', 'LEMIX', 'BJRIX', 'SEBIO', 'LEMIO', 'BJRIO', 'SEBIU', 'LEMIU', 'BJRIU', 'SEBIE',
+  'LEMIE', 'BJRIE', 'SEBIM', 'LEMIM', 'BJRIM', 'SEBIK', 'LEMIK', 'BJRIK', 'SEBIL', 'LEMBJ'
+  
+  // 6-letter words
+  ,'SEBILE', 'BJORNL', 'SEBIKI', 'LEMRUL', 'BJORNI', 'SEBIRI', 'LEMBJO', 'SEBILE', 'BJORNE', 'LEMMIN',
+  'SEBIBE', 'BJORNF', 'LEMWOL', 'SEBILI', 'BJORNE', 'LEMHAW', 'SEBITI', 'BJORNB', 'LEMLIO', 'SEBIHA',
+  'BJORNW', 'LEMEAG', 'SEBITR', 'BJORNR', 'LEMMOU', 'SEBILA', 'BJORNF', 'LEMWAT', 'SEBIEA', 'BJORNA',
+  'LEMFIR', 'SEBIWA', 'BJORNE', 'LEMAIR', 'SEBIFL', 'BJORNFL', 'LEMFLA', 'SEBIAR', 'BJORNAR', 'LEMARM',
+  'SEBIMA', 'BJORNMA', 'LEMMAP', 'SEBILO', 'BJORNLO', 'LEMLORE', 'SEBIMY', 'BJORNM', 'LEMMYS', 'SEBILE',
+  'BJORNL', 'LEMLEG', 'SEBIQU', 'BJORNQ', 'LEMQUE', 'SEBIRE', 'BJORNRE', 'LEMREA', 'SEBIWO', 'BJORNWO',
+  'LEMWOR', 'SEBILA', 'BJORNL', 'LEMLAN', 'SEBIKI', 'BJORKN', 'LEMKIN', 'SEBITH', 'BJORNT', 'LEMTHR',
+  'SEBILE', 'BJORNL', 'SEBIKI', 'LEMRUL', 'BJORNI', 'SEBIRI', 'LEMBJO', 'SEBILE', 'BJORNE', 'LEMMIN',
+  'SEBIBE', 'BJORNF', 'LEMWOL', 'SEBILI', 'BJORNE', 'LEMHAW', 'SEBITI', 'BJORNB', 'LEMLIO', 'SEBIHA',
+  'BJORNW', 'LEMEAG', 'SEBITR', 'BJORNR', 'LEMMOU', 'SEBILA', 'BJORNF', 'LEMWAT', 'SEBIEA', 'BJORNA'
+];
+
+let wordleWord = '';
+let wordleGuesses = [];
+let wordleMaxGuesses = 6;
+let wordleWordLength = 4;
+
+function initWordle() {
+  // Randomly select word length and word
+  const lengths = [3, 4, 5, 6];
+  wordleWordLength = lengths[Math.floor(Math.random() * lengths.length)];
+  
+  // Filter words by length and pick random one
+  const wordsOfLength = wordleWords.filter(word => word.length === wordleWordLength);
+  wordleWord = wordsOfLength[Math.floor(Math.random() * wordsOfLength.length)];
+  
+  wordleGuesses = [];
+  updateWordleGrid();
+  
+  // Update input maxlength
+  document.getElementById('wordleInput').maxLength = wordleWordLength;
+  document.getElementById('wordleInput').placeholder = `${wordleWordLength} letters`;
+  
+  document.getElementById('wordleInput').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') checkGuess();
+  });
+}
+
+function checkGuess() {
+  const input = document.getElementById('wordleInput');
+  const guess = input.value.toUpperCase();
+  
+  if (guess.length !== wordleWordLength) return;
+  
+  wordleGuesses.push(guess);
+  updateWordleGrid();
+  
+  if (guess === wordleWord) {
+    document.getElementById('wordleMessage').innerHTML = '🎉 ACCESS GRANTED!';
+    input.disabled = true;
+  } else if (wordleGuesses.length >= wordleMaxGuesses) {
+    document.getElementById('wordleMessage').innerHTML = `❌ Failed. Key was: ${wordleWord}`;
+    input.disabled = true;
+  }
+  
+  input.value = '';
+}
+
+function updateWordleGrid() {
+  const grid = document.getElementById('wordleGrid');
+  grid.innerHTML = '';
+  
+  for (let i = 0; i < wordleMaxGuesses; i++) {
+    const row = document.createElement('div');
+    row.className = 'wordle-row';
+    
+    const guess = wordleGuesses[i] || '';
+    for (let j = 0; j < wordleWordLength; j++) {
+      const cell = document.createElement('div');
+      cell.className = 'wordle-cell';
+      cell.textContent = guess[j] || '';
+      
+      if (guess) {
+        if (guess[j] === wordleWord[j]) {
+          cell.classList.add('correct');
+        } else if (wordleWord.includes(guess[j])) {
+          cell.classList.add('present');
+        } else {
+          cell.classList.add('absent');
+        }
+      }
+      
+      row.appendChild(cell);
+    }
+    grid.appendChild(row);
+  }
+}
+
+// Zombie Shooter Game
+let gameCanvas, gameCtx;
+let player = { x: 400, y: 300, size: 8 };
+let zombies = [];
+let bullets = [];
+let score = 0;
+let gameRunning = false;
+let gameOver = false;
+let isMobile = false;
+let keys = {};
+
+// Movement variables
+let moveSpeed = 3;
+let playerVelocity = { x: 0, y: 0 };
+let mousePos = { x: 0, y: 0 };
+
+// Check if device is mobile
+function checkMobile() {
+  return /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent) ||
+         window.innerWidth <= 768;
+}
+
+function startZombieShooter() {
+  isMobile = checkMobile();
+
+  // Create game overlay
+  const gameOverlay = document.createElement('div');
+  gameOverlay.id = 'zombieGame';
+  gameOverlay.innerHTML = `
+    <div class="game-header">
+      <h2>🧟 Zombie Shooter</h2>
+      <button onclick="closeZombieGame()">×</button>
+    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="game-info">
+      <span id="score">Score: 0</span>
+      <span id="instructions">${isMobile ? 'Use D-pad to move, tap screen to shoot' : 'Arrow keys to move, mouse to aim, click to shoot'}</span>
+    </div>
+    ${isMobile ? `
+      <div class="mobile-controls">
+        <div class="dpad">
+          <button id="upBtn">↑</button>
+          <div class="dpad-middle">
+            <button id="leftBtn">←</button>
+            <button id="rightBtn">→</button>
+          </div>
+          <button id="downBtn">↓</button>
+        </div>
+        <button id="shootBtn">🔫 SHOOT</button>
+      </div>
+    ` : ''}
+  `;
+
+  document.body.appendChild(gameOverlay);
+
+  // Setup canvas
+  gameCanvas = document.getElementById('gameCanvas');
+  gameCtx = gameCanvas.getContext('2d');
+
+  // Adjust canvas size for mobile
+  if (isMobile) {
+    const maxWidth = Math.min(window.innerWidth - 40, 800);
+    const maxHeight = Math.min(window.innerHeight - 200, 600);
+    gameCanvas.width = maxWidth;
+    gameCanvas.height = maxHeight;
+    player.x = maxWidth / 2;
+    player.y = maxHeight / 2;
+  }
+
+  // Initialize game
+  zombies = [];
+  bullets = [];
+  score = 0;
+  gameRunning = true;
+  gameOver = false;
+
+  // Add initial zombies
+  for (let i = 0; i < 5; i++) {
+    spawnZombie();
+  }
+
+  // Event listeners
+  if (isMobile) {
+    gameCanvas.addEventListener('touchstart', handleTouchShoot);
+    setupDPad();
+  } else {
+    gameCanvas.addEventListener('mousemove', aimPlayer);
+    gameCanvas.addEventListener('click', handleClick);
+    
+    // Keyboard controls
+    document.addEventListener('keydown', handleKeyDown);
+    document.addEventListener('keyup', handleKeyUp);
+  }
+
+  // Start game loop
+  gameLoop();
+}
+
+function closeZombieGame() {
+  gameRunning = false;
+  
+  // Remove event listeners
+  if (!isMobile) {
+    document.removeEventListener('keydown', handleKeyDown);
+    document.removeEventListener('keyup', handleKeyUp);
+  }
+  
+  const gameOverlay = document.getElementById('zombieGame');
+  if (gameOverlay) {
+    gameOverlay.remove();
+  }
+}
+
+function spawnZombie() {
+  const side = Math.floor(Math.random() * 4);
+  let x, y;
+
+  switch (side) {
+    case 0: // top
+      x = Math.random() * gameCanvas.width;
+      y = -20;
+      break;
+    case 1: // right
+      x = gameCanvas.width + 20;
+      y = Math.random() * gameCanvas.height;
+      break;
+    case 2: // bottom
+      x = Math.random() * gameCanvas.width;
+      y = gameCanvas.height + 20;
+      break;
+    case 3: // left
+      x = -20;
+      y = Math.random() * gameCanvas.height;
+      break;
+  }
+
+  zombies.push({
+    x: x,
+    y: y,
+    size: 12,
+    speed: 0.5 + Math.random() * 0.5,
+    health: 1
+  });
+}
+
+function aimPlayer(e) {
+  // Store mouse position for aiming bullets
+  const rect = gameCanvas.getBoundingClientRect();
+  mousePos.x = e.clientX - rect.left;
+  mousePos.y = e.clientY - rect.top;
+}
+
+function handleTouchShoot(e) {
+  e.preventDefault();
+  if (!gameRunning || gameOver) return;
+  
+  if (gameOver) {
+    // Restart game
+    zombies = [];
+    bullets = [];
+    score = 0;
+    gameOver = false;
+
+    // Add initial zombies
+    for (let i = 0; i < 5; i++) {
+      spawnZombie();
+    }
+
+    gameLoop();
+  } else {
+    shootBullet();
+  }
+}
+
+function handleClick(e) {
+  e.preventDefault();
+  if (!gameRunning) return;
+  
+  if (gameOver) {
+    // Restart game
+    zombies = [];
+    bullets = [];
+    score = 0;
+    gameOver = false;
+
+    // Add initial zombies
+    for (let i = 0; i < 5; i++) {
+      spawnZombie();
+    }
+
+    gameLoop();
+  } else {
+    shootBullet();
+  }
+}
+
+function handleKeyDown(e) {
+  keys[e.key] = true;
+  e.preventDefault();
+}
+
+function handleKeyUp(e) {
+  keys[e.key] = false;
+  e.preventDefault();
+}
+
+function setupDPad() {
+  const upBtn = document.getElementById('upBtn');
+  const downBtn = document.getElementById('downBtn');
+  const leftBtn = document.getElementById('leftBtn');
+  const rightBtn = document.getElementById('rightBtn');
+
+  // Touch events for D-pad
+  upBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys['ArrowUp'] = true; });
+  upBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys['ArrowUp'] = false; });
+  
+  downBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys['ArrowDown'] = true; });
+  downBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys['ArrowDown'] = false; });
+  
+  leftBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys['ArrowLeft'] = true; });
+  leftBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys['ArrowLeft'] = false; });
+  
+  rightBtn.addEventListener('touchstart', (e) => { e.preventDefault(); keys['ArrowRight'] = true; });
+  rightBtn.addEventListener('touchend', (e) => { e.preventDefault(); keys['ArrowRight'] = false; });
+
+  // Shoot button
+  const shootBtn = document.getElementById('shootBtn');
+  shootBtn.addEventListener('touchstart', (e) => {
+    e.preventDefault();
+    shootBullet();
+  });
+}
+
+function shootBullet() {
+  if (!gameRunning || gameOver) return;
+
+  bullets.push({
+    x: player.x,
+    y: player.y,
+    dx: 0,
+    dy: 0,
+    speed: 8,
+    size: 3
+  });
+
+  // Calculate direction to mouse/touch position
+  let targetX, targetY;
+
+  if (isMobile) {
+    // For mobile, shoot in the direction the player is facing (center of screen)
+    targetX = gameCanvas.width / 2;
+    targetY = gameCanvas.height / 2;
+  } else {
+    // For desktop, shoot towards stored mouse position
+    targetX = mousePos.x;
+    targetY = mousePos.y;
+  }
+
+  const angle = Math.atan2(targetY - player.y, targetX - player.x);
+  bullets[bullets.length - 1].dx = Math.cos(angle);
+  bullets[bullets.length - 1].dy = Math.sin(angle);
+}
+
+function updateGame() {
+  if (!gameRunning || gameOver) return;
+
+  // Update player movement
+  playerVelocity.x = 0;
+  playerVelocity.y = 0;
+
+  if (keys['ArrowUp'] || keys['w'] || keys['W']) playerVelocity.y = -moveSpeed;
+  if (keys['ArrowDown'] || keys['s'] || keys['S']) playerVelocity.y = moveSpeed;
+  if (keys['ArrowLeft'] || keys['a'] || keys['A']) playerVelocity.x = -moveSpeed;
+  if (keys['ArrowRight'] || keys['d'] || keys['D']) playerVelocity.x = moveSpeed;
+
+  // Apply movement
+  player.x += playerVelocity.x;
+  player.y += playerVelocity.y;
+
+  // Keep player in bounds
+  player.x = Math.max(player.size, Math.min(gameCanvas.width - player.size, player.x));
+  player.y = Math.max(player.size, Math.min(gameCanvas.height - player.size, player.y));
+
+  // Update bullets
+  bullets = bullets.filter(bullet => {
+    bullet.x += bullet.dx * bullet.speed;
+    bullet.y += bullet.dy * bullet.speed;
+
+    // Remove bullets that are off screen
+    return bullet.x > -10 && bullet.x < gameCanvas.width + 10 &&
+           bullet.y > -10 && bullet.y < gameCanvas.height + 10;
+  });
+
+  // Update zombies
+  zombies.forEach(zombie => {
+    // Move towards player
+    const angle = Math.atan2(player.y - zombie.y, player.x - zombie.x);
+    zombie.x += Math.cos(angle) * zombie.speed;
+    zombie.y += Math.sin(angle) * zombie.speed;
+  });
+
+  // Check bullet-zombie collisions
+  bullets.forEach((bullet, bulletIndex) => {
+    zombies.forEach((zombie, zombieIndex) => {
+      const dx = bullet.x - zombie.x;
+      const dy = bullet.y - zombie.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+
+      if (distance < bullet.size + zombie.size) {
+        // Hit!
+        zombie.health--;
+        bullets.splice(bulletIndex, 1);
+
+        if (zombie.health <= 0) {
+          zombies.splice(zombieIndex, 1);
+          score += 10;
+
+          // Spawn new zombie
+          setTimeout(spawnZombie, Math.random() * 2000 + 1000);
+        }
+      }
+    });
+  });
+
+  // Check player-zombie collisions
+  zombies.forEach(zombie => {
+    const dx = player.x - zombie.x;
+    const dy = player.y - zombie.y;
+    const distance = Math.sqrt(dx * dx + dy * dy);
+
+    if (distance < player.size + zombie.size) {
+      gameOver = true;
+    }
+  });
+
+  // Spawn more zombies over time
+  if (Math.random() < 0.005) {
+    spawnZombie();
+  }
+}
+
+function drawGame() {
+  // Clear canvas
+  gameCtx.fillStyle = '#000';
+  gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+  // Draw player
+  gameCtx.fillStyle = '#fff';
+  gameCtx.beginPath();
+  gameCtx.arc(player.x, player.y, player.size, 0, Math.PI * 2);
+  gameCtx.fill();
+
+  // Draw zombies
+  gameCtx.fillStyle = '#f00';
+  zombies.forEach(zombie => {
+    gameCtx.beginPath();
+    gameCtx.arc(zombie.x, zombie.y, zombie.size, 0, Math.PI * 2);
+    gameCtx.fill();
+  });
+
+  // Draw bullets
+  gameCtx.fillStyle = '#ff0';
+  bullets.forEach(bullet => {
+    gameCtx.beginPath();
+    gameCtx.arc(bullet.x, bullet.y, bullet.size, 0, Math.PI * 2);
+    gameCtx.fill();
+  });
+
+  // Draw game over screen
+  if (gameOver) {
+    gameCtx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+    gameCtx.fillRect(0, 0, gameCanvas.width, gameCanvas.height);
+
+    gameCtx.fillStyle = '#fff';
+    gameCtx.font = '48px Arial';
+    gameCtx.textAlign = 'center';
+    gameCtx.fillText('GAME OVER', gameCanvas.width / 2, gameCanvas.height / 2 - 50);
+
+    gameCtx.font = '24px Arial';
+    gameCtx.fillText(`Final Score: ${score}`, gameCanvas.width / 2, gameCanvas.height / 2);
+    gameCtx.fillText('Click to restart', gameCanvas.width / 2, gameCanvas.height / 2 + 50);
+  }
+}
+
+function gameLoop() {
+  if (!gameRunning) return;
+
+  updateGame();
+  drawGame();
+
+  // Update score display
+  document.getElementById('score').textContent = `Score: ${score}`;
+
+  if (!gameOver) {
+    requestAnimationFrame(gameLoop);
+  }
+}
+
 // Display media in grid
 function displayMedia(mediaList) {
   const container = document.getElementById('mediaContainer');
   container.innerHTML = '';
   
   if (mediaList.length === 0) {
-    container.innerHTML = '<p class="no-results">No media found</p>';
+    container.innerHTML = `
+      <div class="minigame">
+        <h3>🔐 Access Denied</h3>
+        <p>Enter decryption key:</p>
+        <div class="wordle-grid" id="wordleGrid"></div>
+        <div class="input-row">
+          <input type="text" id="wordleInput" placeholder="4 letters">
+          <button onclick="checkGuess()">Submit</button>
+        </div>
+        <div id="wordleMessage"></div>
+      </div>
+    `;
+    initWordle();
     return;
   }
   
