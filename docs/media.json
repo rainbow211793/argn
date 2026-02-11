@@ -128,13 +128,13 @@
     {
       "id": "9",
       "type": "image",
-      "slug": "gifstad_flag_second",
+      "slug": "begin_to_fle",
       "category": "Flags",
       "folders": [],
       "link": "https://file.garden/aVg4wWHpj1W4fShD/begintofle.png",
       "title": "Begin to fle",
-      "description": "The National Flag of Gifstad, used from SL2 onwards",
-      "tags": ["Gifstad", "flag", "iconic", "gifsk", "SL2"],
+      "description": "Begin to fle is a cultural meme that derives from ninja's attempt to kill sebisuper9mil.",
+      "tags": ["Gifstad", "flag", "iconic", "begin", "memes"],
       "credits": "unknown",
       "submitted_by": "rainbow211793"
     },
@@ -676,6 +676,19 @@
       "tags": ["Brrreadi", "flowchart", "politics", "political party", "party map", "bread"],
       "credits": "brrreadi",
       "submitted_by": "rainbow211793 / robloxisbad0190"
+    },
+    {
+      "id": "49",
+      "type": "image",
+      "slug": "proposedSL0flag",
+      "category": "Flags",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/proposedSL0flag.png",
+      "title": "Proposed SL0 flag",
+      "description": "Proposed SL0 flag before sarmaledelamama's [SL0 royalist flag]().",
+      "tags": ["SL0", "SL0 flag", "proposed", "tricolour", "emblem"],
+      "credits": "GuiM2",
+      "submitted_by": "rainbow211793"
     }
   ]
 }
