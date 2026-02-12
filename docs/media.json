@@ -17,6 +17,12 @@
       "name": "SL1 Maps of Gifstad++",
       "description": "Maps of Gifstad and its territories during SL1",
       "color": "#FFFF00"
+    },
+    {
+      "id": "Jormunland",
+      "name": "Jormunland",
+      "description": "Everything on Jormunland",
+      "color": "#FFA500"
     }
   ],
 
@@ -668,7 +674,7 @@
       "id": "48",
       "type": "image",
       "slug": "brrreadiSL1partymap",
-      "category": "Screenshots",
+      "category": "Graph",
       "folders": [],
       "link": "https://file.garden/aVg4wWHpj1W4fShD/steve's%20human%20trafficking%20photos/image-19.png",
       "title": "Brrreadi's comprehensive SL1 party map",
@@ -688,6 +694,84 @@
       "description": "Proposed SL0 flag before sarmaledelamama's [SL0 royalist flag]().",
       "tags": ["SL0", "SL0 flag", "proposed", "tricolour", "emblem"],
       "credits": "GuiM2",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "50",
+      "type": "image",
+      "slug": "LASTPOPULATIONOFSL1STATS",
+      "category": "Screenshots",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/LASTRECORDEDPOPSOFSL1.png",
+      "title": "Highest Peak of Gifstad / Last number before end of SL1 of Gifstad.",
+      "description": "This screenshot shows the highest extent of Gifstad SL1 / ANY SL nation at the end of SL1 before SL2 starts [last pubically salvageable message].",
+      "tags": ["SL1", "First", "Last", "163", "NO1"],
+      "credits": "rainbow211793",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "51",
+      "type": "image",
+      "slug": "firstSL1gifstadia",
+      "category": "Screenshots",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/firstSL1gifstadian.png",
+      "title": "First SL1 Gifstadian joining Gifstad.",
+      "description": "This screenshot shows the first fully SL1 [people not from SL0] gifstadian.",
+      "tags": ["SL1", "First", "Jorey", "join-country"],
+      "credits": "rainbow211793",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "52",
+      "type": "image",
+      "slug": "plannedjormunlandsettlement",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/plannedjormunlandsettlement.png",
+      "title": "Planned Jormunland settlement",
+      "description": "This screenshot shows a planned settlement in Jormunland.",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "53",
+      "type": "image",
+      "slug": "deathoforthomsg",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/deathoforthomsg.png",
+      "title": "Death of ortho",
+      "description": "This screenshot shows the death of ortho while exploring a cave and his brother Adhrilr taking over the Jormunland expeditions.",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "Adhrilr", "era"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "54",
+      "type": "image",
+      "slug": "ortholastmsgbeforedeath",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/ortholastmsgbeforedeath.png",
+      "title": "Ortho's last message before death",
+      "description": "This screenshot shows Ortho's late stage paranoia over the \"Snake-like voice\" that guided him to the cave despite his brother's warnings.",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "Adhrilr", "era", "snake"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "55",
+      "type": "image",
+      "slug": "discoveryofruin",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/discoveryofruin.png",
+      "title": "Ortho's discovery of ancient ruins",
+      "description": "This screenshot shows Ortho's discovery of Jormunland ruins with him still hearing the \"Snake-like voice\".",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "Adhrilr", "era", "ruins"],
+      "credits": "othropingu",
       "submitted_by": "rainbow211793"
     }
   ]
