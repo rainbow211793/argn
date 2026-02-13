@@ -773,6 +773,58 @@
       "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "Adhrilr", "era", "ruins"],
       "credits": "othropingu",
       "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "56",
+      "type": "image",
+      "slug": "expeditionofjormunlandstartermsg",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/expeditionofjormunlandstatermsg.png",
+      "title": "The Journey of Jormungandr",
+      "description": "This screenshot shows Ortho's proclamation of the civilian led expedition to jormunland [currently known as jormungandr].",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "start"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "57",
+      "type": "image",
+      "slug": "departureofortho",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/departureofortho.png",
+      "title": "The departure to Jormungandr/Jormunland",
+      "description": "This screenshot shows Ortho's proclamation of the civilian led expedition to jormunland [currently known as jormungandr].",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "start"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "58",
+      "type": "image",
+      "slug": "suspicionofvikingactivity",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/suspicionsofvikingsupercity.png",
+      "title": "The start of the southern expeditions",
+      "description": "This screenshot shows Ortho's start of southern expeditions where he suspects vikings [Gifviks] made a \"supercity\".",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "start", "search", "gifviks", "supercity"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "59",
+      "type": "image",
+      "slug": "suspicionofvikingactivity",
+      "category": "Screenshots",
+      "folders": ["Jormunland"],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/Jormunland/narrowingofsearchforsupercity.png",
+      "title": "The narrowing of the search for a supercity [Jormunland]",
+      "description": "This screenshot shows Ortho's narrowing of southern expeditions where he suspects vikings [Gifviks] made a \"supercity\".",
+      "tags": ["SL1", "Jormunland", "settlement", "colonisation", "death", "start", "search", "gifviks", "supercity"],
+      "credits": "othropingu",
+      "submitted_by": "rainbow211793"
     }
   ]
 }
