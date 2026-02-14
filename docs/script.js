@@ -4,6 +4,7 @@ let filteredMedia = [];
 let currentView = 'grid';
 let selectedCategory = '';
 let selectedFolder = '';
+let currentDetailMediaIndex = -1;
 
 // Helpers for YouTube detection and embedding
 function isYouTubeUrl(url) {
@@ -50,6 +51,151 @@ function stopAllIframes() {
         iframe.src = '';
       }
     } catch (e) {}
+  });
+}
+
+// Render Lyket widgets with retries (handles async script load)
+function renderLyketWidgets(attempt = 0) {
+  const maxAttempts = 20;
+  const tryRender = () => {
+    if (window.lyket && typeof window.lyket.render === 'function') {
+      try { window.lyket.render(); return true; } catch (e) { console.warn('lyket.render failed', e); }
+    }
+    if (window.Lyket && typeof window.Lyket.render === 'function') {
+      try { window.Lyket.render(); return true; } catch (e) { console.warn('Lyket.render failed', e); }
+    }
+    return false;
+  };
+
+  if (tryRender()) return;
+
+  if (attempt < maxAttempts) {
+    setTimeout(() => renderLyketWidgets(attempt + 1), 100);
+  } else {
+    console.warn('Lyket widget render attempts exhausted');
+    // If Lyket never initialized, provide a local fallback so users can still up/down vote
+    try { initLocalLyketFallback(); } catch (e) { console.warn('local Lyket fallback failed', e); }
+  }
+}
+
+// Local fallback for up/down widgets when Lyket is unavailable.
+function initLocalLyketFallback() {
+  // Inject styles for the local fallback (only once)
+  if (!document.getElementById('local-lyket-styles')) {
+    const style = document.createElement('style');
+    style.id = 'local-lyket-styles';
+    style.textContent = `
+      .media-card { position: relative; }
+      .local-lyket-badge { position: absolute; left: 10px; bottom: 12px; display: inline-flex; align-items: center; gap: 8px; background: rgba(15,27,53,0.88); padding: 6px 10px; border-radius: 20px; border: 1px solid #3a5a7a; color: #fff; font-weight: 700; font-family: inherit; box-shadow: 0 6px 20px rgba(0,0,0,0.25); z-index: 6; }
+      .local-lyket-up, .local-lyket-down { background: transparent; border: none; color: #fff; font-size: 20px; cursor: pointer; padding: 6px; border-radius: 8px; line-height: 1; }
+      .local-lyket-up:hover { background: rgba(34,106,138,0.18); }
+      .local-lyket-down:hover { background: rgba(180,50,50,0.12); }
+      .local-lyket-count { font-size: 13px; color: #9fc1d6; margin: 0 6px; }
+      .local-lyket-up.voted, .local-lyket-down.voted { box-shadow: 0 2px 8px rgba(0,0,0,0.25) inset; transform: translateY(-1px); }
+      .local-lyket-up:disabled, .local-lyket-down:disabled { opacity: 0.6; cursor: default; }
+      @media (max-width: 600px) { .local-lyket-badge { left: 8px; bottom: 8px; padding: 5px 8px; } .local-lyket-up, .local-lyket-down { font-size: 18px; } }
+    `;
+    document.head.appendChild(style);
+  }
+
+  const widgets = document.querySelectorAll('[data-lyket-type="updown"]');
+  widgets.forEach(widget => {
+    // Avoid double-initializing
+    if (widget.dataset.localized === '1') return;
+
+    const id = widget.getAttribute('data-lyket-id') || widget.dataset.lyketId;
+    if (!id) return;
+
+    // Create simple up/down UI with one-vote-per-client enforcement
+    // If widget sits inside a media card, move it to the card and style as a badge bottom-left
+    const card = widget.closest('.media-card');
+    if (card) {
+      // ensure card position is relative (style injection above also sets this, but be safe)
+      if (!card.style.position) card.style.position = 'relative';
+      // move widget to be a direct child of card so absolute positioning works
+      card.appendChild(widget);
+      widget.classList.add('local-lyket-badge');
+    } else {
+      // fallback: keep inline but make it visually prominent
+      widget.style.display = 'inline-flex';
+      widget.style.alignItems = 'center';
+      widget.style.gap = '6px';
+      widget.style.background = 'rgba(15,27,53,0.88)';
+      widget.style.padding = '6px 8px';
+      widget.style.borderRadius = '14px';
+      widget.style.border = '1px solid #3a5a7a';
+      widget.style.color = '#fff';
+    }
+
+    const upBtn = document.createElement('button');
+    upBtn.className = 'local-lyket-up';
+    upBtn.textContent = '👍';
+    upBtn.title = 'Upvote';
+
+    const count = document.createElement('span');
+    count.className = 'local-lyket-count';
+
+    const downBtn = document.createElement('button');
+    downBtn.className = 'local-lyket-down';
+    downBtn.textContent = '👎';
+    downBtn.title = 'Downvote';
+
+    // Load stored counts and voting flag (one vote per client/browser)
+    const storageKey = `localvote:${id}`;
+    let stored = { up: 0, down: 0, voted: null };
+    try { stored = JSON.parse(localStorage.getItem(storageKey)) || stored; } catch (e) {}
+
+    function updateDisplay() {
+      const score = (stored.up || 0) - (stored.down || 0);
+      count.textContent = `${score} (${stored.up || 0}↑ ${stored.down || 0}↓)`;
+      // reflect whether this client already voted
+      if (stored.voted === 'up') {
+        upBtn.classList.add('voted');
+        upBtn.disabled = true;
+        downBtn.disabled = true;
+      } else if (stored.voted === 'down') {
+        downBtn.classList.add('voted');
+        upBtn.disabled = true;
+        downBtn.disabled = true;
+      } else {
+        upBtn.classList.remove('voted');
+        downBtn.classList.remove('voted');
+        upBtn.disabled = false;
+        downBtn.disabled = false;
+      }
+    }
+
+    upBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (stored.voted) return; // enforce one vote per client
+      stored.up = (stored.up || 0) + 1;
+      stored.voted = 'up';
+      try { localStorage.setItem(storageKey, JSON.stringify(stored)); } catch (err) {}
+      updateDisplay();
+    });
+
+    downBtn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      if (stored.voted) return; // enforce one vote per client
+      stored.down = (stored.down || 0) + 1;
+      stored.voted = 'down';
+      try { localStorage.setItem(storageKey, JSON.stringify(stored)); } catch (err) {}
+      updateDisplay();
+    });
+
+    // Prevent clicks from bubbling to card/detail handlers
+    [upBtn, downBtn].forEach(b => {
+      b.addEventListener('click', (e) => e.stopPropagation());
+      b.addEventListener('touchstart', (e) => e.stopPropagation());
+    });
+
+    // Attach in order: up, count, down
+    widget.appendChild(upBtn);
+    widget.appendChild(count);
+    widget.appendChild(downBtn);
+    widget.dataset.localized = '1';
+
+    updateDisplay();
   });
 }
 
@@ -193,7 +339,7 @@ async function loadMedia() {
       // Show specific media by slug
       const media = allMedia.find(m => m.slug === slug);
       if (media) {
-        showMediaDetail(media);
+        showMediaDetail(media, false);
       } else {
         // Slug not found, show gallery
         populateCategoryFilter();
@@ -270,11 +416,19 @@ function filterByFolder(folderId) {
   const url = new URL(window.location);
   if (folderId) {
     url.searchParams.set('folder', folderId);
+    window.history.pushState({ folder: folderId }, '', url);
   } else {
     url.searchParams.delete('folder');
+    window.history.pushState({}, '', url.pathname);
   }
-  window.history.replaceState(null, '', url);
   
+  applyFilters();
+}
+
+// Clear folder filter and go back to gallery
+function clearFolderFilter() {
+  selectedFolder = '';
+  window.history.pushState({}, '', window.location.pathname);
   applyFilters();
 }
 
@@ -806,6 +960,26 @@ function displayMedia(mediaList) {
   const container = document.getElementById('mediaContainer');
   container.innerHTML = '';
   
+  // Update back button in top area based on folder selection
+  const folderBackBtn = document.getElementById('folderBackBtn');
+  if (selectedFolder) {
+    folderBackBtn.innerHTML = `
+      <button onclick="clearFolderFilter()" style="
+        background: #2a5a7a;
+        color: #e0e0e0;
+        border: 1px solid #3a5a7a;
+        padding: 10px 24px;
+        border-radius: 6px;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 14px;
+        transition: all 0.3s;
+      " onmouseover="this.style.background='#3a6a8a'" onmouseout="this.style.background='#2a5a7a'">← Back to Gallery</button>
+    `;
+  } else {
+    folderBackBtn.innerHTML = '';
+  }
+  
   if (mediaList.length === 0) {
     container.innerHTML = `
       <div class="minigame">
@@ -847,12 +1021,22 @@ function displayMedia(mediaList) {
           <div class="card-category">${item.category || 'Uncategorized'}</div>
           <h3>${item.title}</h3>
           <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
+          <div class="lyket-inline">
+            <div data-lyket-type="updown" data-lyket-id="${item.slug || item.id}"></div>
+          </div>
         </div>
       `;
       card.addEventListener('click', () => showMediaDetail(item));
     }
     
     container.appendChild(card);
+
+    // Ensure clicks on the Lyket widget don't trigger the card click
+    const lyketInline = card.querySelector('.lyket-inline');
+    if (lyketInline) {
+      lyketInline.addEventListener('click', (e) => e.stopPropagation());
+      lyketInline.addEventListener('touchstart', (e) => e.stopPropagation());
+    }
 
     // Handle text file loading in cards
     if (item.type === 'text') {
@@ -874,12 +1058,18 @@ function displayMedia(mediaList) {
       audio.addEventListener('play', () => pauseAllMedia(audio));
     }
   });
+
+  // Initialize/render any Lyket widgets added dynamically
+  renderLyketWidgets();
 }
 
 // Show detailed view of media
-function showMediaDetail(item) {
+function showMediaDetail(item, pushHistory = true) {
   const detail = document.getElementById('mediaDetail');
   const container = document.getElementById('mediaContainer');
+  
+  // Find the current media index in filteredMedia
+  currentDetailMediaIndex = filteredMedia.findIndex(m => m.id === item.id);
   
   const preview = getMediaPreview(item, true);
   
@@ -894,15 +1084,33 @@ function showMediaDetail(item) {
     downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
   
-  const shareUrl = item.type === 'folder' ? `${window.location.origin}${window.location.pathname}?folder=${item.id.replace('folder-', '')}` : `${window.location.origin}${window.location.pathname.replace('index.html', '')}${item.slug}`;
+  const shareUrl = item.type === 'folder' ? `${window.location.origin}${window.location.pathname}?folder=${item.id.replace('folder-', '')}` : `https://argn.quest/index.html?slug=${item.slug}`;
   const shareFunction = item.type === 'folder' ? `shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')` : `shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')`;
   
+  // Generate navigation buttons
+  const hasPrev = currentDetailMediaIndex > 0;
+  const hasNext = currentDetailMediaIndex < filteredMedia.length - 1;
+  
+  let navigationHtml = '';
+  if (filteredMedia.length > 1) {
+    navigationHtml = `
+      <div class="media-navigation">
+        ${hasPrev ? `<button class="nav-btn prev-btn" onclick="navigateMedia(-1)">← Previous</button>` : '<div class="nav-btn disabled"></div>'}
+        <span class="media-counter">${currentDetailMediaIndex + 1} / ${filteredMedia.length}</span>
+        ${hasNext ? `<button class="nav-btn next-btn" onclick="navigateMedia(1)">Next →</button>` : '<div class="nav-btn disabled"></div>'}
+      </div>
+    `;
+  }
+  
   detail.innerHTML = `
-    <div class="detail-header">
+      <div class="detail-header">
       <button class="back-btn" onclick="backToGrid()">← Back</button>
       <div class="detail-buttons">
         ${downloadHtml}
         <button class="share-btn" onclick="${shareFunction}">📤 Share</button>
+        <div class="lyket-detail" style="display:inline-block; margin-left:8px;">
+          <div data-lyket-type="updown" data-lyket-id="${item.slug || item.id}"></div>
+        </div>
       </div>
     </div>
     <div class="detail-content">
@@ -921,10 +1129,18 @@ function showMediaDetail(item) {
         </div>
       </div>
     </div>
+    ${navigationHtml}
   `;
   
   container.classList.add('hidden');
   detail.classList.remove('hidden');
+
+  // Prevent header widget clicks from bubbling if detail has any click handlers
+  const headerLyket = detail.querySelector('.lyket-detail');
+  if (headerLyket) {
+    headerLyket.addEventListener('click', (e) => e.stopPropagation());
+    headerLyket.addEventListener('touchstart', (e) => e.stopPropagation());
+  }
 
   // Handle text file loading in detail view
   if (item.type === 'text') {
@@ -945,6 +1161,46 @@ function showMediaDetail(item) {
   if (audioEl) {
     audioEl.addEventListener('play', () => pauseAllMedia(audioEl));
   }
+  
+  // Update URL with slug query param (push a new history entry so Back works)
+  if (typeof pushHistory === 'undefined' || pushHistory) {
+    try {
+      window.history.pushState({ slug: item.slug }, '', `?slug=${item.slug}`);
+    } catch (e) {
+      // Fallback to replaceState if pushState fails for some reason
+      window.history.replaceState(null, '', `?slug=${item.slug}`);
+    }
+  }
+  
+  // Add keyboard navigation
+  document.addEventListener('keydown', handleDetailKeyboard);
+
+  // Render any Lyket widgets in the detail view
+  renderLyketWidgets();
+}
+
+// Navigate between media in detail view
+function navigateMedia(direction) {
+  const newIndex = currentDetailMediaIndex + direction;
+  if (newIndex >= 0 && newIndex < filteredMedia.length) {
+    showMediaDetail(filteredMedia[newIndex]);
+  }
+}
+
+// Handle keyboard navigation in detail view
+function handleDetailKeyboard(e) {
+  if (document.getElementById('mediaDetail').classList.contains('hidden')) {
+    document.removeEventListener('keydown', handleDetailKeyboard);
+    return;
+  }
+  
+  if (e.key === 'ArrowLeft') {
+    e.preventDefault();
+    navigateMedia(-1);
+  } else if (e.key === 'ArrowRight') {
+    e.preventDefault();
+    navigateMedia(1);
+  }
 }
 
 // Back to grid view
@@ -955,6 +1211,8 @@ function backToGrid() {
   } else {
     document.getElementById('mediaContainer').classList.remove('hidden');
     document.getElementById('mediaDetail').classList.add('hidden');
+    selectedFolder = '';
+    applyFilters();
     pauseAllMedia();
     stopAllIframes();
   }
@@ -1198,6 +1456,37 @@ function closeShareModal() {
   if (modal) modal.remove();
 }
 
+// Handle browser back/forward navigation
+function handlePopState(event) {
+  const urlParams = new URLSearchParams(window.location.search);
+  const slug = urlParams.get('slug');
+  const folderParam = urlParams.get('folder');
+
+  if (slug) {
+    const media = allMedia.find(m => m.slug === slug);
+    if (media) {
+      showMediaDetail(media, false);
+      return;
+    }
+  }
+
+  if (folderParam) {
+    selectedFolder = folderParam;
+    document.getElementById('mediaContainer').classList.remove('hidden');
+    document.getElementById('mediaDetail').classList.add('hidden');
+    applyFilters();
+    return;
+  }
+
+  // Default: show root gallery
+  selectedFolder = '';
+  document.getElementById('mediaContainer').classList.remove('hidden');
+  document.getElementById('mediaDetail').classList.add('hidden');
+  applyFilters();
+}
+
+window.addEventListener('popstate', handlePopState);
+
 // Event listeners
 document.addEventListener('DOMContentLoaded', () => {
   loadMedia();
@@ -1207,4 +1496,20 @@ document.addEventListener('DOMContentLoaded', () => {
     applyFilters();
   });
 });
+
+// Toggle Super Search panel
+function toggleSuperSearch() {
+  const panel = document.getElementById('superSearchPanel');
+  panel.classList.toggle('hidden');
+  
+  // If panel is now visible, focus on the search input
+  if (!panel.classList.contains('hidden')) {
+    setTimeout(() => {
+      const gcsInput = document.querySelector('.gsc-search-button');
+      if (gcsInput) {
+        gcsInput.focus();
+      }
+    }, 100);
+  }
+}
 

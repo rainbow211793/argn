@@ -14,16 +14,24 @@
 
           gtag('config', 'G-N8SLQM5979');
         </script>
+        <!-- Google Custom Search -->
+        <script async src="https://cse.google.com/cse.js?cx=d686d0bcd50804967">
+        </script>
         <link rel="stylesheet" href="style.css">
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+        <script src="https://unpkg.com/@lyket/widget@latest/dist/lyket.js?apiKey=pt_c4069b3bd0ca4b7a020a87f8095d36"></script>
     </head>
     <body>
         <div class="container">
             <h1 onclick="startZombieShooter()">Argn</h1>
             <p>"Distribute, Create & Save"</p>
             
+            <div id="folderBackBtn" style="text-align: left; min-height: 40px; padding-left: 20px;"></div>
+            
             <div class="filter-section">
                 <input type="text" placeholder="Search media or folders..." class="search-bar" id="searchInput">
+                
+                <button class="super-search-btn" onclick="toggleSuperSearch()">🔍 [Super Search]</button>
                 
                 <div class="category-filter">
                     <label for="categorySelect">Filter by Category:</label>
@@ -31,6 +39,16 @@
                         <option value="">All Categories</option>
                     </select>
                 </div>
+            </div>
+
+            <!-- Lyket widgets will be injected per-media in the gallery and detail views -->
+            
+            <div id="superSearchPanel" class="super-search-panel hidden">
+                <div class="super-search-header">
+                    <h3>🔍 Super Search</h3>
+                    <button class="close-btn" onclick="toggleSuperSearch()">×</button>
+                </div>
+                <div class="gcse-search"></div>
             </div>
             
             <div id="mediaContainer" class="media-container"></div>
