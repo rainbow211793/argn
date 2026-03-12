@@ -8,6 +8,44 @@ body {
     padding-bottom: 50px;
     background-color: #1a2a4a;
     color: #e0e0e0;
+    position: relative;
+}
+
+/* Ad Sidebar Styles */
+.ad-sidebar {
+    position: fixed;
+    top: 180px;
+    width: 300px;
+    max-height: 600px;
+    padding: 15px;
+    background-color: transparent;
+    z-index: 50;
+    transition: opacity 0.3s ease;
+}
+
+.ad-sidebar-right {
+    right: 20px;
+}
+
+.ad-sidebar.hidden {
+    display: none;
+}
+
+/* Make AdSense ads responsive */
+.ad-sidebar ins {
+    display: block !important;
+}
+
+@media (max-width: 1400px) {
+    .ad-sidebar {
+        display: none;
+    }
+}
+
+@media (max-width: 768px) {
+    .ad-sidebar {
+        display: none;
+    }
 }
 
 .container {
@@ -148,26 +186,7 @@ body {
     color: #a0b0d0;
 }
 
-.super-search-btn {
-    display: block;
-    margin: 0 auto;
-    padding: 10px 20px;
-    font-size: 14px;
-    font-weight: 600;
-    border: 2px solid #5a7aaa;
-    background-color: #3a5a7a;
-    color: #e0e0e0;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: all 0.3s ease;
-}
 
-.super-search-btn:hover {
-    background-color: #5a7aaa;
-    border-color: #7a9adc;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-}
 
 .category-filter {
     display: flex;
@@ -205,110 +224,7 @@ body {
     transition: opacity 0.3s ease;
 }
 
-/* Super Search Panel */
-.super-search-panel {
-    background-color: #2a3a5a;
-    border: 2px solid #3a5a7a;
-    border-radius: 8px;
-    padding: 20px;
-    margin: 20px 0;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
-}
 
-.super-search-panel.hidden {
-    display: none;
-}
-
-.super-search-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
-    padding-bottom: 10px;
-    border-bottom: 1px solid #3a5a7a;
-}
-
-.super-search-header h3 {
-    margin: 0;
-    color: #e0e0e0;
-    font-size: 18px;
-}
-
-.close-btn {
-    background: none;
-    border: none;
-    color: #a0b0d0;
-    font-size: 24px;
-    cursor: pointer;
-    transition: color 0.3s ease;
-    padding: 0;
-    width: 30px;
-    height: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-.close-btn:hover {
-    color: #e0e0e0;
-}
-
-.gcse-search {
-    margin-top: 15px;
-}
-
-/* Google Custom Search styling */
-.gsc-control-cse,
-.gsc-control-cse.gsc-control-cse-en {
-    background-color: transparent !important;
-    border: none !important;
-    padding: 0 !important;
-}
-
-.gsc-search-button {
-    background-color: #5a7aaa !important;
-}
-
-.gsc-search-button:hover {
-    background-color: #7a9adc !important;
-}
-
-.gsc-input {
-    background-color: #1a2a4a !important;
-}
-
-.gsc-input-box {
-    border: 1px solid #3a5a7a !important;
-    border-radius: 4px !important;
-}
-
-.gsc-resultsbox-visible {
-    border: 1px solid #3a5a7a !important;
-    background-color: #1a2a4a !important;
-}
-
-.gsc-result-info {
-    color: #a0b0d0 !important;
-}
-
-.gs-result-item {
-    border-bottom: 1px solid #3a5a7a !important;
-    padding: 15px 0 !important;
-    background-color: transparent !important;
-}
-
-.gs-result-item .gs-title {
-    color: #5a9ade !important;
-    text-decoration: none !important;
-}
-
-.gs-result-item .gs-title:hover {
-    color: #7abde0 !important;
-}
-
-.gs-result-item .gs-snippet {
-    color: #a0b0d0 !important;
-}
 
 
 

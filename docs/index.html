@@ -5,6 +5,19 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>Argn - Media Archive</title>
+        <!-- SEO Meta Tags -->
+        <meta name="description" content="Argn is a comprehensive media archive featuring Gifstad, Gifsk, and Argn Quest content. Discover, create, and save media in our curated collection.">
+        <meta name="keywords" content="Argn, Gifstad, Gifsk, Argn Quest, media archive, GIFs, images, videos, audio, text files, distribute create save">
+        <meta name="author" content="Argn">
+        <meta name="robots" content="index, follow">
+        <meta property="og:title" content="Argn - Media Archive">
+        <meta property="og:description" content="Distribute, Create & Save - A comprehensive media archive featuring Gifstad, Gifsk, and Argn Quest content.">
+        <meta property="og:type" content="website">
+        <meta property="og:url" content="https://argn.quest">
+        <meta property="og:image" content="https://argn.quest/preview.jpg">
+        <meta name="twitter:card" content="summary_large_image">
+        <meta name="twitter:title" content="Argn - Media Archive">
+        <meta name="twitter:description" content="Distribute, Create & Save - Featuring Gifstad, Gifsk, and Argn Quest content.">
         <!-- Google tag (gtag.js) -->
         <script async src="https://www.googletagmanager.com/gtag/js?id=G-N8SLQM5979"></script>
         <script>
@@ -14,14 +27,25 @@
 
           gtag('config', 'G-N8SLQM5979');
         </script>
-        <!-- Google Custom Search -->
-        <script async src="https://cse.google.com/cse.js?cx=d686d0bcd50804967">
-        </script>
         <link rel="stylesheet" href="style.css">
         <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-        <script src="https://unpkg.com/@lyket/widget@latest/dist/lyket.js?apiKey=pt_c4069b3bd0ca4b7a020a87f8095d36"></script>
+        <!-- Google AdSense -->
+        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-2948944070095267" crossorigin="anonymous"></script>
     </head>
     <body>
+        <!-- Right Sidebar Ad -->
+        <div id="rightAdSidebar" class="ad-sidebar ad-sidebar-right">
+            <ins class="adsbygoogle"
+                 style="display:block"
+                 data-ad-client="ca-pub-2948944070095267"
+                 data-ad-slot="xxxxxxxx"
+                 data-ad-format="vertical"
+                 data-full-width-responsive="true"></ins>
+            <script>
+                 (adsbygoogle = window.adsbygoogle || []).push({});
+            </script>
+        </div>
+        
         <div class="container">
             <h1 onclick="startZombieShooter()">Argn</h1>
             <p>"Distribute, Create & Save"</p>
@@ -31,24 +55,12 @@
             <div class="filter-section">
                 <input type="text" placeholder="Search media or folders..." class="search-bar" id="searchInput">
                 
-                <button class="super-search-btn" onclick="toggleSuperSearch()">🔍 [Super Search]</button>
-                
                 <div class="category-filter">
                     <label for="categorySelect">Filter by Category:</label>
                     <select id="categorySelect" class="category-select">
                         <option value="">All Categories</option>
                     </select>
                 </div>
-            </div>
-
-            <!-- Lyket widgets will be injected per-media in the gallery and detail views -->
-            
-            <div id="superSearchPanel" class="super-search-panel hidden">
-                <div class="super-search-header">
-                    <h3>🔍 Super Search</h3>
-                    <button class="close-btn" onclick="toggleSuperSearch()">×</button>
-                </div>
-                <div class="gcse-search"></div>
             </div>
             
             <div id="mediaContainer" class="media-container"></div>
