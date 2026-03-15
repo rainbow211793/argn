@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Page not found</title>
+  <style>
+    body { margin: 0; font-family: system-ui, sans-serif; background: #0f1b35; color: #e0e0e0; display: flex; align-items: center; justify-content: center; height: 100vh; }
+    .box { max-width: 520px; padding: 24px; border-radius: 12px; background: rgba(10,20,40,0.9); border: 1px solid rgba(255,255,255,0.06); text-align: center; }
+    a { color: #57a5ff; }
+  </style>
+</head>
+<body>
+  <div class="box">
+    <h1>Page not found</h1>
+    <p>Redirecting you to Argn...</p>
+    <p>If you are not redirected, <a href="/">click here</a>.</p>
+  </div>
+
+  <script>
+    // GitHub Pages doesn't support server-side rewrite rules. This script redirects
+    // clean URLs like /gifstad_flag_first or /folder/youtube to the app’s index.
+    (function() {
+      const path = window.location.pathname.replace(/\/+$/, '');
+      if (!path || path === '/') return;
+
+      const parts = path.split('/').filter(Boolean);
+      let target = '/index.html';
+      const params = new URLSearchParams();
+
+      if (parts[0] === 'folder') {
+        if (parts[1]) params.set('folder', parts[1]);
+        if (parts[2]) params.set('slug', parts[2]);
+      } else {
+        params.set('slug', parts[0]);
+      }
+
+      const query = params.toString();
+      if (query) target += `?${query}`;
+
+      window.location.replace(target);
+    })();
+  </script>
+</body>
+</html>
