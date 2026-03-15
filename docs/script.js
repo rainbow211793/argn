@@ -195,6 +195,41 @@ async function loadMedia() {
       const media = allMedia.find(m => m.slug === slug);
       if (media) {
         showMediaDetail(media, false);
+        // Update meta tags for Discord sharing
+        document.getElementById('page-title').textContent = media.title + ' - Argn';
+        document.getElementById('meta-description').content = media.description || media.title;
+        document.getElementById('og-title').content = media.title;
+        document.getElementById('og-description').content = media.description || media.title;
+        document.getElementById('og-url').content = window.location.href;
+        document.getElementById('twitter-title').content = media.title;
+        document.getElementById('twitter-description').content = media.description || media.title;
+        if (media.type === 'image' || media.type === 'gif') {
+          document.getElementById('og-image').content = media.link;
+          document.getElementById('og-type').content = 'article';
+          document.getElementById('twitter-card').content = 'summary_large_image';
+          document.getElementById('og-video').content = '';
+        } else if (media.type === 'video') {
+          if (isYouTubeUrl(media.link)) {
+            const id = getYouTubeID(media.link);
+            if (id) {
+              document.getElementById('og-image').content = getYouTubeThumbnail(id);
+            }
+            document.getElementById('og-type').content = 'video';
+            document.getElementById('twitter-card').content = 'player';
+            document.getElementById('og-video').content = media.link; // or embed URL?
+          } else {
+            document.getElementById('og-video').content = media.link;
+            document.getElementById('og-type').content = 'video';
+            document.getElementById('twitter-card').content = 'player';
+            document.getElementById('og-image').content = ''; // or a poster?
+          }
+        } else {
+          // For other types, keep default
+          document.getElementById('og-image').content = 'https://argn.quest/preview.jpg';
+          document.getElementById('og-type').content = 'website';
+          document.getElementById('twitter-card').content = 'summary_large_image';
+          document.getElementById('og-video').content = '';
+        }
       } else {
         // Slug not found, show gallery
         populateCategoryFilter();
