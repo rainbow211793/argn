@@ -54,6 +54,11 @@ function stopAllIframes() {
   });
 }
 
+// Determine if a click event is a plain left-click (not a modifier / new-tab click)
+function isPlainClick(event) {
+  return event.button === 0 && !event.ctrlKey && !event.metaKey && !event.shiftKey && !event.altKey;
+}
+
 // Copy to clipboard
 function copyToClipboard(text) {
   navigator.clipboard.writeText(text).then(() => {
@@ -201,6 +206,31 @@ async function loadMedia() {
     if (folderParam) {
       selectedFolder = folderParam;
     }
+
+    // Ensure shared URLs (clean path or query) create a usable history state so Back stays within the app.
+    (function() {
+      const state = {};
+      let cleanPath = '/';
+
+      if (folderParam && slug) {
+        cleanPath = `/folder/${folderParam}/${slug}`;
+        state.folder = folderParam;
+        state.slug = slug;
+      } else if (folderParam) {
+        cleanPath = `/folder/${folderParam}`;
+        state.folder = folderParam;
+      } else if (slug) {
+        cleanPath = `/${slug}`;
+        state.slug = slug;
+      }
+
+      // If the current URL doesn't already match the clean path, replace it.
+      if (window.location.pathname !== cleanPath) {
+        window.history.replaceState(state, '', cleanPath);
+      } else {
+        window.history.replaceState(state, '', window.location.pathname);
+      }
+    })();
 
     if (slug) {
       // Show specific media by slug
@@ -903,6 +933,17 @@ function displayMedia(mediaList) {
   }
   
   if (mediaList.length === 0) {
+    if (selectedFolder) {
+      container.innerHTML = `
+        <div class="empty-folder" style="text-align: center; padding: 60px 20px; color: #cfd8ff;">
+          <h3 style="margin-bottom: 16px;">📂 No media in this folder</h3>
+          <p style="margin-bottom: 20px; color: #a0b4d8;">This folder doesn't have any items yet. Try another folder or go back to the gallery.</p>
+          <button onclick="clearFolderFilter()" style="background: #2a5a7a; color: #e0e0e0; border: 1px solid #3a5a7a; padding: 10px 24px; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 14px; transition: all 0.3s;" onmouseover="this.style.background='#3a6a8a'" onmouseout="this.style.background='#2a5a7a'">← Back to Gallery</button>
+        </div>
+      `;
+      return;
+    }
+
     container.innerHTML = `
       <div class="minigame">
         <h3>🔐 Access Denied</h3>
@@ -938,7 +979,8 @@ function displayMedia(mediaList) {
         <button class="share-btn" onclick="shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
       `;
       card.addEventListener('click', (e) => {
-        if (e.target.closest('a')) return; // Let the link handle it
+        // Allow modifier clicks (new tab, open in background) and ignore clicks on buttons/inputs.
+        if (!isPlainClick(e) || e.target.closest('button, input, textarea, select')) return;
         e.preventDefault();
         filterByFolder(item.id.replace('folder-', ''));
       });
@@ -956,7 +998,8 @@ function displayMedia(mediaList) {
         <button class="share-btn" onclick="shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
       `;
       card.addEventListener('click', (e) => {
-        if (e.target.closest('a')) return; // Let the link handle it
+        // Allow modifier clicks (new tab, open in background) and ignore clicks on buttons/inputs.
+        if (!isPlainClick(e) || e.target.closest('button, input, textarea, select')) return;
         e.preventDefault();
         showMediaDetail(item);
       });
@@ -1017,8 +1060,20 @@ function showMediaDetail(item, pushHistory = true) {
     downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
   
-  const shareUrl = item.type === 'folder' ? `${window.location.origin}${window.location.pathname}?folder=${item.id.replace('folder-', '')}` : `https://argn.quest/index.html?slug=${item.slug}`;
-  const shareFunction = item.type === 'folder' ? `shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')` : `shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')`;
+  const currentFolder = selectedFolder || (() => {
+    const parts = window.location.pathname.split('/').filter(p => p);
+    return parts[0] === 'folder' ? parts[1] : '';
+  })();
+
+  const shareUrl = item.type === 'folder'
+    ? `https://argn.quest/folder/${item.id.replace('folder-', '')}`
+    : currentFolder
+      ? `https://argn.quest/folder/${currentFolder}/${item.slug}`
+      : `https://argn.quest/${item.slug}`;
+
+  const shareFunction = item.type === 'folder'
+    ? `shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')`
+    : `shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}', '${shareUrl.replace(/'/g, "\\'")}')`;
   
   // Generate navigation buttons
   const hasPrev = currentDetailMediaIndex > 0;
@@ -1153,51 +1208,53 @@ function handleDetailKeyboard(e) {
 
 // Back to grid view
 function backToGrid() {
-  if (window.location.pathname !== '/') {
-    // Clean URL
-    if (window.location.pathname.startsWith('/folder/')) {
-      const parts = window.location.pathname.split('/').filter(p => p);
-      if (parts.length === 2) {
-        // /folder/xyz - shared folder link, go to homepage
-        window.location.href = 'https://argn.quest/';
-      } else if (parts.length === 3) {
-        // /folder/xyz/slug - go back to folder
-        window.location.href = `https://argn.quest/folder/${parts[1]}`;
-      } else {
-        window.location.href = 'https://argn.quest/';
-      }
-    } else {
-      // /slug - go to homepage
-      window.location.href = 'https://argn.quest/';
-    }
-  } else {
-    // Query params
-    const urlParams = new URLSearchParams(window.location.search);
-    if (urlParams.get('slug')) {
-      const folder = urlParams.get('folder');
-      if (folder) {
-        window.location.href = `https://argn.quest/folder/${folder}`;
-      } else {
-        window.location.href = 'https://argn.quest/';
-      }
-    } else {
-      document.getElementById('mediaContainer').classList.remove('hidden');
-      document.getElementById('mediaDetail').classList.add('hidden');
+  const detail = document.getElementById('mediaDetail');
+  const container = document.getElementById('mediaContainer');
+
+  // If we're already in gallery mode, nothing to do
+  if (detail.classList.contains('hidden')) return;
+
+  // Determine where to go based on the current URL
+  const pathname = window.location.pathname.replace(/\/+$/, '');
+  if (pathname.startsWith('/folder/')) {
+    const parts = pathname.split('/').filter(p => p);
+    if (parts.length === 3) {
+      // /folder/xyz/slug -> go back to folder view
+      selectedFolder = parts[1];
+      window.history.replaceState({ folder: selectedFolder }, '', `/folder/${selectedFolder}`);
+    } else if (parts.length === 2) {
+      // /folder/xyz -> go back to root gallery
       selectedFolder = '';
-      applyFilters();
-      pauseAllMedia();
-      stopAllIframes();
-      
-      // Show ads in gallery view
-      const adSidebar = document.getElementById('rightAdSidebar');
-      if (adSidebar) adSidebar.classList.remove('hidden');
+      window.history.replaceState({}, '', '/');
+    } else {
+      // Fallback to root
+      selectedFolder = '';
+      window.history.replaceState({}, '', '/');
     }
+  } else if (pathname && pathname !== '/') {
+    // /slug -> go back to root gallery
+    selectedFolder = '';
+    window.history.replaceState({}, '', '/');
+  } else {
+    // Root or query-param share -> go to root gallery
+    selectedFolder = '';
+    window.history.replaceState({}, '', '/');
   }
+
+  container.classList.remove('hidden');
+  detail.classList.add('hidden');
+  applyFilters();
+  pauseAllMedia();
+  stopAllIframes();
+
+  // Show ads in gallery view
+  const adSidebar = document.getElementById('rightAdSidebar');
+  if (adSidebar) adSidebar.classList.remove('hidden');
 }
 
 // Share media
-function shareMedia(slug, title) {
-  const shareUrl = `https://argn.quest/${slug}`;
+function shareMedia(slug, title, shareUrl) {
+  const url = shareUrl || `https://argn.quest/${slug}`;
   
   // Show modal popup
   const modal = document.createElement('div');
@@ -1284,12 +1341,14 @@ function shareMedia(slug, title) {
   document.body.appendChild(modal);
 }
 
-function copyShareLink(url) {
+function copyShareLink(url, button) {
+  const btn = button || document.activeElement || (typeof event !== 'undefined' ? event.target : null);
   navigator.clipboard.writeText(url).then(() => {
-    const btn = event.target;
-    const original = btn.textContent;
-    btn.textContent = '✅ Copied!';
-    btn.style.background = '#1e8449';
+    const original = btn ? btn.textContent : null;
+    if (btn) {
+      btn.textContent = '✅ Copied!';
+      btn.style.background = '#1e8449';
+    }
     
     // Show toast notification
     const toast = document.createElement('div');
