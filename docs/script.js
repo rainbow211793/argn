@@ -181,15 +181,27 @@ async function loadMedia() {
     
     filteredMedia = allMedia;
     
-    // Check if we're viewing a slug or folder
+    // Determine current slug/folder from either query params or clean paths
     const urlParams = new URLSearchParams(window.location.search);
-    const slug = urlParams.get('slug');
-    const folderParam = urlParams.get('folder');
-    
+    let slug = urlParams.get('slug');
+    let folderParam = urlParams.get('folder');
+
+    const pathParts = window.location.pathname.replace(/\/+$/, '').split('/').filter(p => p);
+    if (pathParts.length) {
+      if (pathParts[0] === 'folder') {
+        folderParam = folderParam || pathParts[1];
+        if (pathParts.length === 3) {
+          slug = slug || pathParts[2];
+        }
+      } else {
+        slug = slug || pathParts[0];
+      }
+    }
+
     if (folderParam) {
       selectedFolder = folderParam;
     }
-    
+
     if (slug) {
       // Show specific media by slug
       const media = allMedia.find(m => m.slug === slug);
@@ -325,14 +337,11 @@ function applyFilters() {
 function filterByFolder(folderId) {
   selectedFolder = folderId;
   
-  // Update URL
-  const url = new URL(window.location);
+  // Update URL for clean routing
   if (folderId) {
-    url.searchParams.set('folder', folderId);
-    window.history.pushState({ folder: folderId }, '', url);
+    window.history.pushState({ folder: folderId }, '', `/folder/${folderId}`);
   } else {
-    url.searchParams.delete('folder');
-    window.history.pushState({}, '', url.pathname);
+    window.history.pushState({}, '', '/');
   }
   
   applyFilters();
@@ -341,7 +350,7 @@ function filterByFolder(folderId) {
 // Clear folder filter and go back to gallery
 function clearFolderFilter() {
   selectedFolder = '';
-  window.history.pushState({}, '', window.location.pathname);
+  window.history.pushState({}, '', '/');
   applyFilters();
 }
 
