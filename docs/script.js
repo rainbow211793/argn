@@ -195,40 +195,63 @@ async function loadMedia() {
       const media = allMedia.find(m => m.slug === slug);
       if (media) {
         showMediaDetail(media, false);
-        // Update meta tags for Discord sharing
-        document.getElementById('page-title').textContent = media.title + ' - Argn';
-        document.getElementById('meta-description').content = media.description || media.title;
-        document.getElementById('og-title').content = media.title;
-        document.getElementById('og-description').content = media.description || media.title;
-        document.getElementById('og-url').content = window.location.href;
-        document.getElementById('twitter-title').content = media.title;
-        document.getElementById('twitter-description').content = media.description || media.title;
+        // Update meta tags for Discord/Google sharing
+        document.title = media.title + ' - Argn';
+        const metaDesc = document.querySelector('meta[name="description"]');
+        if (metaDesc) metaDesc.content = media.description || media.title;
+        const ogTitle = document.querySelector('meta[property="og:title"]');
+        if (ogTitle) ogTitle.content = media.title;
+        const ogDesc = document.querySelector('meta[property="og:description"]');
+        if (ogDesc) ogDesc.content = media.description || media.title;
+        const ogUrl = document.querySelector('meta[property="og:url"]');
+        if (ogUrl) ogUrl.content = window.location.href;
+        const twitterTitle = document.querySelector('meta[name="twitter:title"]');
+        if (twitterTitle) twitterTitle.content = media.title;
+        const twitterDesc = document.querySelector('meta[name="twitter:description"]');
+        if (twitterDesc) twitterDesc.content = media.description || media.title;
+        
         if (media.type === 'image' || media.type === 'gif') {
-          document.getElementById('og-image').content = media.link;
-          document.getElementById('og-type').content = 'article';
-          document.getElementById('twitter-card').content = 'summary_large_image';
-          document.getElementById('og-video').content = '';
+          const ogImage = document.querySelector('meta[property="og:image"]');
+          if (ogImage) ogImage.content = media.link;
+          const ogType = document.querySelector('meta[property="og:type"]');
+          if (ogType) ogType.content = 'article';
+          const twitterCard = document.querySelector('meta[name="twitter:card"]');
+          if (twitterCard) twitterCard.content = 'summary_large_image';
+          const ogVideo = document.querySelector('meta[property="og:video"]');
+          if (ogVideo) ogVideo.content = '';
         } else if (media.type === 'video') {
           if (isYouTubeUrl(media.link)) {
             const id = getYouTubeID(media.link);
             if (id) {
-              document.getElementById('og-image').content = getYouTubeThumbnail(id);
+              const ogImage = document.querySelector('meta[property="og:image"]');
+              if (ogImage) ogImage.content = getYouTubeThumbnail(id);
             }
-            document.getElementById('og-type').content = 'video';
-            document.getElementById('twitter-card').content = 'player';
-            document.getElementById('og-video').content = media.link; // or embed URL?
+            const ogType = document.querySelector('meta[property="og:type"]');
+            if (ogType) ogType.content = 'video';
+            const twitterCard = document.querySelector('meta[name="twitter:card"]');
+            if (twitterCard) twitterCard.content = 'player';
+            const ogVideo = document.querySelector('meta[property="og:video"]');
+            if (ogVideo) ogVideo.content = media.link;
           } else {
-            document.getElementById('og-video').content = media.link;
-            document.getElementById('og-type').content = 'video';
-            document.getElementById('twitter-card').content = 'player';
-            document.getElementById('og-image').content = ''; // or a poster?
+            const ogVideo = document.querySelector('meta[property="og:video"]');
+            if (ogVideo) ogVideo.content = media.link;
+            const ogType = document.querySelector('meta[property="og:type"]');
+            if (ogType) ogType.content = 'video';
+            const twitterCard = document.querySelector('meta[name="twitter:card"]');
+            if (twitterCard) twitterCard.content = 'player';
+            const ogImage = document.querySelector('meta[property="og:image"]');
+            if (ogImage) ogImage.content = '';
           }
         } else {
-          // For other types, keep default
-          document.getElementById('og-image').content = 'https://argn.quest/preview.jpg';
-          document.getElementById('og-type').content = 'website';
-          document.getElementById('twitter-card').content = 'summary_large_image';
-          document.getElementById('og-video').content = '';
+          // Reset to default
+          const ogImage = document.querySelector('meta[property="og:image"]');
+          if (ogImage) ogImage.content = 'https://argn.quest/preview.jpg';
+          const ogType = document.querySelector('meta[property="og:type"]');
+          if (ogType) ogType.content = 'website';
+          const twitterCard = document.querySelector('meta[name="twitter:card"]');
+          if (twitterCard) twitterCard.content = 'summary_large_image';
+          const ogVideo = document.querySelector('meta[property="og:video"]');
+          if (ogVideo) ogVideo.content = '';
         }
       } else {
         // Slug not found, show gallery
@@ -895,25 +918,39 @@ function displayMedia(mediaList) {
     
     if (item.type === 'folder') {
       card.innerHTML = `
-        ${preview}
-        <div class="card-info">
-          <div class="card-category">${item.category || 'Uncategorized'}</div>
-          <h3>${item.title}</h3>
-          <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
-          <button class="share-btn" onclick="shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
-        </div>
+        <a href="/folder/${item.id.replace('folder-', '')}" style="text-decoration: none; color: inherit; display: block;">
+          ${preview}
+          <div class="card-info">
+            <div class="card-category">${item.category || 'Uncategorized'}</div>
+            <h3>${item.title}</h3>
+            <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
+          </div>
+        </a>
+        <button class="share-btn" onclick="shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
       `;
-      card.addEventListener('click', () => filterByFolder(item.id.replace('folder-', '')));
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return; // Let the link handle it
+        e.preventDefault();
+        filterByFolder(item.id.replace('folder-', ''));
+      });
     } else {
+      const href = selectedFolder ? `/folder/${selectedFolder}/${item.slug}` : `/${item.slug}`;
       card.innerHTML = `
-        ${preview}
-        <div class="card-info">
-          <div class="card-category">${item.category || 'Uncategorized'}</div>
-          <h3>${item.title}</h3>
-          <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
-        </div>
+        <a href="${href}" style="text-decoration: none; color: inherit; display: block;">
+          ${preview}
+          <div class="card-info">
+            <div class="card-category">${item.category || 'Uncategorized'}</div>
+            <h3>${item.title}</h3>
+            <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
+          </div>
+        </a>
+        <button class="share-btn" onclick="shareMedia('${item.slug}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
       `;
-      card.addEventListener('click', () => showMediaDetail(item));
+      card.addEventListener('click', (e) => {
+        if (e.target.closest('a')) return; // Let the link handle it
+        e.preventDefault();
+        showMediaDetail(item);
+      });
     }
     
     container.appendChild(card);
@@ -1050,13 +1087,27 @@ function showMediaDetail(item, pushHistory = true) {
     audioEl.addEventListener('play', () => pauseAllMedia(audioEl));
   }
   
-  // Update URL with slug query param (push a new history entry so Back works)
+  // Update URL with clean slug URL (push a new history entry so Back works)
   if (typeof pushHistory === 'undefined' || pushHistory) {
     try {
-      window.history.pushState({ slug: item.slug }, '', `?slug=${item.slug}`);
+      let cleanUrl;
+      if (window.location.pathname.startsWith('/folder/')) {
+        const parts = window.location.pathname.split('/').filter(p => p);
+        cleanUrl = `/folder/${parts[1]}/${item.slug}`;
+      } else {
+        cleanUrl = `/${item.slug}`;
+      }
+      window.history.pushState({ slug: item.slug }, '', cleanUrl);
     } catch (e) {
-      // Fallback to replaceState if pushState fails for some reason
-      window.history.replaceState(null, '', `?slug=${item.slug}`);
+      // Fallback
+      let cleanUrl;
+      if (window.location.pathname.startsWith('/folder/')) {
+        const parts = window.location.pathname.split('/').filter(p => p);
+        cleanUrl = `/folder/${parts[1]}/${item.slug}`;
+      } else {
+        cleanUrl = `/${item.slug}`;
+      }
+      window.history.replaceState(null, '', cleanUrl);
     }
   }
   
@@ -1093,26 +1144,51 @@ function handleDetailKeyboard(e) {
 
 // Back to grid view
 function backToGrid() {
-  // If we're on a slug page, go back to gallery root
-  if (new URLSearchParams(window.location.search).get('slug')) {
-    window.history.back();
+  if (window.location.pathname !== '/') {
+    // Clean URL
+    if (window.location.pathname.startsWith('/folder/')) {
+      const parts = window.location.pathname.split('/').filter(p => p);
+      if (parts.length === 2) {
+        // /folder/xyz - shared folder link, go to homepage
+        window.location.href = 'https://argn.quest/';
+      } else if (parts.length === 3) {
+        // /folder/xyz/slug - go back to folder
+        window.location.href = `https://argn.quest/folder/${parts[1]}`;
+      } else {
+        window.location.href = 'https://argn.quest/';
+      }
+    } else {
+      // /slug - go to homepage
+      window.location.href = 'https://argn.quest/';
+    }
   } else {
-    document.getElementById('mediaContainer').classList.remove('hidden');
-    document.getElementById('mediaDetail').classList.add('hidden');
-    selectedFolder = '';
-    applyFilters();
-    pauseAllMedia();
-    stopAllIframes();
-    
-    // Show ads in gallery view
-    const adSidebar = document.getElementById('rightAdSidebar');
-    if (adSidebar) adSidebar.classList.remove('hidden');
+    // Query params
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('slug')) {
+      const folder = urlParams.get('folder');
+      if (folder) {
+        window.location.href = `https://argn.quest/folder/${folder}`;
+      } else {
+        window.location.href = 'https://argn.quest/';
+      }
+    } else {
+      document.getElementById('mediaContainer').classList.remove('hidden');
+      document.getElementById('mediaDetail').classList.add('hidden');
+      selectedFolder = '';
+      applyFilters();
+      pauseAllMedia();
+      stopAllIframes();
+      
+      // Show ads in gallery view
+      const adSidebar = document.getElementById('rightAdSidebar');
+      if (adSidebar) adSidebar.classList.remove('hidden');
+    }
   }
 }
 
 // Share media
 function shareMedia(slug, title) {
-  const shareUrl = `https://argn.quest/index.html?slug=${slug}`;
+  const shareUrl = `https://argn.quest/${slug}`;
   
   // Show modal popup
   const modal = document.createElement('div');
@@ -1256,7 +1332,7 @@ function copyShareLink(url) {
 }
 
 function shareFolder(folderId, title) {
-  const shareUrl = `${window.location.origin}${window.location.pathname}?folder=${folderId}`;
+  const shareUrl = `https://argn.quest/folder/${folderId}`;
   
   // Show modal popup
   const modal = document.createElement('div');
@@ -1350,9 +1426,25 @@ function closeShareModal() {
 
 // Handle browser back/forward navigation
 function handlePopState(event) {
-  const urlParams = new URLSearchParams(window.location.search);
-  const slug = urlParams.get('slug');
-  const folderParam = urlParams.get('folder');
+  let slug, folderParam;
+
+  if (window.location.pathname !== '/') {
+    if (window.location.pathname.startsWith('/folder/')) {
+      const parts = window.location.pathname.split('/').filter(p => p);
+      if (parts.length >= 2) {
+        folderParam = parts[1];
+        if (parts.length === 3) {
+          slug = parts[2];
+        }
+      }
+    } else {
+      slug = window.location.pathname.slice(1);
+    }
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    slug = urlParams.get('slug');
+    folderParam = urlParams.get('folder');
+  }
 
   if (slug) {
     const media = allMedia.find(m => m.slug === slug);

@@ -8,6 +8,11 @@ RewriteBase /
 # Redirect /add to the secure form file
 RewriteRule ^add/?$ s1D7kQ2nXpR.html [L,QSA]
 
+# Route folder URLs to index.html (e.g., /folder/youtube -> index.html?folder=youtube)
+RewriteCond %{REQUEST_FILENAME} !-f
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^folder/([a-zA-Z0-9_-]+)/?$ index.html?folder=$1 [L,QSA]
+
 # Route slug URLs to index.html (e.g., /gifstad_flag_first -> index.html?slug=gifstad_flag_first)
 RewriteCond %{REQUEST_FILENAME} !-f
 RewriteCond %{REQUEST_FILENAME} !-d
