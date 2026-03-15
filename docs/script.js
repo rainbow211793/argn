@@ -360,6 +360,8 @@ function applyFilters() {
     return matchCategory && matchFolder && matchSearch;
   });
   
+  console.log('applyFilters:', { selectedFolder, selectedCategory, searchTerm, totalItems: allMedia.length, filteredCount: filteredMedia.length });
+  
   displayMedia(filteredMedia);
 }
 
@@ -968,14 +970,12 @@ function displayMedia(mediaList) {
     
     if (item.type === 'folder') {
       card.innerHTML = `
-        <a href="/folder/${item.id.replace('folder-', '')}" style="text-decoration: none; color: inherit; display: block;">
-          ${preview}
-          <div class="card-info">
-            <div class="card-category">${item.category || 'Uncategorized'}</div>
-            <h3>${item.title}</h3>
-            <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
-          </div>
-        </a>
+        ${preview}
+        <div class="card-info">
+          <div class="card-category">${item.category || 'Uncategorized'}</div>
+          <h3>${item.title}</h3>
+          <p class="tags">${item.tags.map(t => `<span class="tag">#${t}</span>`).join(' ')}</p>
+        </div>
         <button class="share-btn" onclick="shareFolder('${item.id.replace('folder-', '')}', '${item.title.replace(/'/g, "\\'")}')">📤 Share</button>
       `;
       card.addEventListener('click', (e) => {
