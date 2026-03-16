@@ -103,6 +103,13 @@ function getMediaPreview(item, isDetail = false) {
     return `<img src="${item.link}" alt="${item.title}" class="${baseClass}">`;
   } else if (item.type === 'audio') {
     return `<audio class="${baseClass}" controls><source src="${item.link}"></audio>`;
+  } else if (item.type === 'html') {
+    const url = Array.isArray(item.link) ? item.link[0] : item.link;
+    if (isDetail) {
+      // Show an embedded preview of the HTML file
+      return `<iframe class="${baseClass}" src="${url}" sandbox="allow-same-origin allow-scripts" style="border: 1px solid #3a5a7a; border-radius: 8px;"></iframe>`;
+    }
+    return `<div class="${baseClass} html-preview"><div class="file-icon" style="font-size: 48px;">🌐</div></div>`;
   } else if (item.type === 'text') {
     // For text files, display truncated content
     return `<div class="${baseClass} text-preview" data-media-id="${item.id}">Loading text...</div>`;
@@ -1057,7 +1064,8 @@ function showMediaDetail(item, pushHistory = true) {
       <a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Open on YouTube</a>
     `;
   } else if (item.type !== 'text') {
-    downloadHtml = `<a href="${item.link}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
+    const downloadUrl = Array.isArray(item.link) ? item.link[0] : item.link;
+    downloadHtml = `<a href="${downloadUrl}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
   }
   
   const currentFolder = selectedFolder || (() => {
