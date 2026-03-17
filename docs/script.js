@@ -1065,7 +1065,8 @@ function showMediaDetail(item, pushHistory = true) {
     `;
   } else if (item.type !== 'text') {
     const downloadUrl = Array.isArray(item.link) ? item.link[0] : item.link;
-    downloadHtml = `<a href="${downloadUrl}" class="download-btn" target="_blank" rel="noopener noreferrer">Download</a>`;
+    const buttonText = item.type === 'html' ? 'Open in New Tab' : 'Download';
+    downloadHtml = `<a href="${downloadUrl}" class="download-btn" target="_blank" rel="noopener noreferrer">${buttonText}</a>`;
   }
   
   const currentFolder = selectedFolder || (() => {
