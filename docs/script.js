@@ -106,8 +106,8 @@ function getMediaPreview(item, isDetail = false) {
   } else if (item.type === 'html') {
     const url = Array.isArray(item.link) ? item.link[0] : item.link;
     if (isDetail) {
-      // Show an embedded preview of the HTML file
-      return `<iframe class="${baseClass}" src="${url}" sandbox="allow-same-origin allow-scripts" style="border: 1px solid #3a5a7a; border-radius: 8px;"></iframe>`;
+      // Open HTML file in a new tab
+      return `<a href="${url}" target="_blank" class="html-link" style="display: inline-block; padding: 12px 24px; background-color: #3a5a7a; color: white; text-decoration: none; border-radius: 8px; font-size: 16px;">Open HTML in New Tab</a>`;
     }
     return `<div class="${baseClass} html-preview"><div class="file-icon" style="font-size: 48px;">🌐</div></div>`;
   } else if (item.type === 'text') {
