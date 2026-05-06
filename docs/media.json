@@ -942,6 +942,19 @@
       "tags": ["SL2","ernest", "dorne OG", "ernestPFP", "dorne"],
       "credits": "ernest",
       "submitted_by": "rainbow211793"
+    },
+    {
+      "id": "69",
+      "type": "image",
+      "slug": "OGIamStevepfp",
+      "category": "PFP",
+      "folders": [],
+      "link": "https://file.garden/aVg4wWHpj1W4fShD/more/iamsteveSL1pfp.webp",
+      "title": "PFP of I am Steve [SL1]",
+      "description": "This is the PFP of I am steve in SL1.",
+      "tags": ["SL1","steve", "i am steve OG", "stevePFP", "iamsteve"],
+      "credits": "rainbow211793",
+      "submitted_by": "rainbow211793"
     }
   ]
 }
